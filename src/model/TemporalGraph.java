@@ -22,4 +22,13 @@ public class TemporalGraph extends AbstractGraph {
     public TemporalVertex addVertex(TemporalVertex vertex) {
         return (TemporalVertex) vertices.put(vertex.getIdentifier(), vertex);
     }
+
+    /**
+     * Gets the vertex instance based on an identifier
+     * @param identifier The identifier of the vertex
+     * @return The vertex instance if it is contained, null otherwise
+     */
+    public AbstractVertex getVertex(long identifier) {
+        return vertices.get(identifier);
+    }
 }
