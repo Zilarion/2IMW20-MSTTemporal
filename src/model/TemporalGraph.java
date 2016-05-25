@@ -31,4 +31,10 @@ public class TemporalGraph extends AbstractGraph {
     public AbstractVertex getVertex(long identifier) {
         return vertices.get(identifier);
     }
+
+    @Override
+    public String toString() {
+        String result = "TemporalGraph, N: " + this.vertices.size();
+        return result;
+    }
 }

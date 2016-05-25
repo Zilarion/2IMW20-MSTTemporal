@@ -22,4 +22,10 @@ public class Graph extends AbstractGraph {
     public AbstractVertex getVertex(long identifier) {
         return vertices.get(identifier);
     }
+
+    @Override
+    public String toString() {
+        String result = "Graph, N: " + this.vertices.size();
+        return result;
+    }
 }
