@@ -24,4 +24,7 @@ public abstract class AbstractGraph {
         return vertices.containsKey(identifier);
     }
 
+    public HashMap<Long, AbstractVertex> getVertices() {
+        return vertices;
+    }
 }

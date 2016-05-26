@@ -48,4 +48,21 @@ public abstract class AbstractEdge {
     public float weight() {
         return weight;
     }
+
+
+    /**
+     * The vertex this edge is from
+     * @return The from vertex
+     */
+    public AbstractVertex from() {
+        return from;
+    }
+
+    /**
+     * The vertex this edge is to
+     * @return The to vertex
+     */
+    public AbstractVertex to() {
+        return to;
+    }
 }

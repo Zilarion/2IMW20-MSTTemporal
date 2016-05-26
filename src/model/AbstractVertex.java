@@ -27,4 +27,12 @@ public abstract class AbstractVertex {
         return identifier;
     }
 
+    public AbstractEdge getOutEdge(AbstractVertex v) {
+        for (AbstractEdge e : out) {
+            if (e.to().equals(v)) {
+                return e;
+            }
+        }
+        return null;
+    }
 }
