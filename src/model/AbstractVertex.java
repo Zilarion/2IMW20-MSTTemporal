@@ -26,4 +26,12 @@ public abstract class AbstractVertex<E> {
     public long getIdentifier() {
         return identifier;
     }
+
+    public ArrayList<E> in() {
+        return in;
+    }
+
+    public ArrayList<E> out() {
+        return out;
+    }
 }

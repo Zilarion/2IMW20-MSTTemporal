@@ -3,7 +3,7 @@ package model;
 /**
  * Created by ruudandriessen on 11/05/16.
  */
-public class TemporalGraph extends AbstractGraph<TemporalVertex> {
+public class TemporalGraph extends AbstractGraph<TemporalVertex, TemporalEdge> {
 
     /**
      * Adds a new temporal vertex in the graph
@@ -30,11 +30,5 @@ public class TemporalGraph extends AbstractGraph<TemporalVertex> {
      */
     public TemporalVertex getVertex(long identifier) {
         return vertices.get(identifier);
-    }
-
-    @Override
-    public String toString() {
-        String result = "TemporalGraph, N: " + this.vertices.size();
-        return result;
     }
 }

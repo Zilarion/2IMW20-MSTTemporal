@@ -65,4 +65,5 @@ public abstract class AbstractEdge {
     public AbstractVertex to() {
         return to;
     }
+
 }

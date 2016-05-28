@@ -3,7 +3,7 @@ package model;
 /**
  * Created by ruudandriessen on 11/05/16.
  */
-public class Graph extends AbstractGraph<Vertex> {
+public class Graph extends AbstractGraph<Vertex, Edge> {
 
     /**
      * Adds a new vertex in the graph
@@ -19,13 +19,7 @@ public class Graph extends AbstractGraph<Vertex> {
      * @param identifier The identifier of the vertex
      * @return The vertex instance if it is contained, null otherwise
      */
-    public AbstractVertex getVertex(long identifier) {
+    public Vertex getVertex(long identifier) {
         return vertices.get(identifier);
-    }
-
-    @Override
-    public String toString() {
-        String result = "Graph, N: " + this.vertices.size();
-        return result;
     }
 }

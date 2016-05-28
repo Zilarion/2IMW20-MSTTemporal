@@ -71,4 +71,10 @@ public class TemporalEdge extends AbstractEdge {
     public TemporalVertex to() {
         return (TemporalVertex) to;
     }
+
+    @Override
+    public String toString() {
+        String label = "\"<" + this.start() + ", " + this.end() + ">[" + this.weight() + "]\"";
+        return from.getIdentifier() + " -> " + to.getIdentifier() + " [label=" + label + "]";
+    }
 }
