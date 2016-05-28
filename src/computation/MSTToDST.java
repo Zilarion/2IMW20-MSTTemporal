@@ -85,9 +85,9 @@ public class MSTToDST {
 
         long id = 0;
         for (TemporalEdge e : edges) {
-            for (DSTVertex v : vVertices.get()) {
+//            for (DSTVertex v : vVertices.get()) {
 
-            }
+//            }
         }
 
     }
