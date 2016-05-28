@@ -3,7 +3,7 @@ package model;
 /**
  * Created by ruudandriessen on 11/05/16.
  */
-public class Graph extends AbstractGraph {
+public class Graph extends AbstractGraph<Vertex> {
 
     /**
      * Adds a new vertex in the graph
@@ -11,7 +11,7 @@ public class Graph extends AbstractGraph {
      * @return The vertex instance
      */
     public Vertex addVertex(long identifier) {
-        return (Vertex) vertices.put(identifier, new Vertex(identifier));
+        return vertices.put(identifier, new Vertex(identifier));
     }
 
     /**

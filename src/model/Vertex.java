@@ -3,7 +3,7 @@ package model;
 /**
  * Created by ruudandriessen on 11/05/16.
  */
-public class Vertex extends AbstractVertex {
+public class Vertex extends AbstractVertex<Edge> {
     /**
      * Creates a new vertex with given identifier
      *

@@ -3,7 +3,7 @@ package model;
 /**
  * Created by ruudandriessen on 11/05/16.
  */
-public class TemporalVertex extends AbstractVertex {
+public class TemporalVertex extends AbstractVertex<TemporalEdge> {
     /**
      * Creates a Temporal Vertex with the given identifier
      * @param identifier The identifier of the temporal vertex
@@ -28,5 +28,14 @@ public class TemporalVertex extends AbstractVertex {
      */
     public boolean addOutEdge(TemporalEdge edge) {
         return out.add(edge);
+    }
+
+    public TemporalEdge getOutEdge(TemporalVertex v) {
+        for (TemporalEdge e : out) {
+            if (e.to().equals(v)) {
+                return e;
+            }
+        }
+        return null;
     }
 }

@@ -3,7 +3,7 @@ package model;
 /**
  * Created by ruudandriessen on 11/05/16.
  */
-public class TemporalGraph extends AbstractGraph {
+public class TemporalGraph extends AbstractGraph<TemporalVertex> {
 
     /**
      * Adds a new temporal vertex in the graph
@@ -11,7 +11,7 @@ public class TemporalGraph extends AbstractGraph {
      * @return The temporal vertex instance
      */
     public TemporalVertex addVertex(long identifier) {
-        return (TemporalVertex) vertices.put(identifier, new TemporalVertex(identifier));
+        return vertices.put(identifier, new TemporalVertex(identifier));
     }
 
     /**
@@ -20,7 +20,7 @@ public class TemporalGraph extends AbstractGraph {
      * @return
      */
     public TemporalVertex addVertex(TemporalVertex vertex) {
-        return (TemporalVertex) vertices.put(vertex.getIdentifier(), vertex);
+        return vertices.put(vertex.getIdentifier(), vertex);
     }
 
     /**
@@ -28,7 +28,7 @@ public class TemporalGraph extends AbstractGraph {
      * @param identifier The identifier of the vertex
      * @return The vertex instance if it is contained, null otherwise
      */
-    public AbstractVertex getVertex(long identifier) {
+    public TemporalVertex getVertex(long identifier) {
         return vertices.get(identifier);
     }
 

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 /**
  * Created by ruudandriessen on 11/05/16.
  */
-public abstract class AbstractVertex {
-    protected ArrayList<AbstractEdge> in, out; // :TODO: verify this is always a directed graph
+public abstract class AbstractVertex<E> {
+    protected ArrayList<E> in, out; // :TODO: verify this is always a directed graph
     protected long identifier;
 
     /**
@@ -25,14 +25,5 @@ public abstract class AbstractVertex {
      */
     public long getIdentifier() {
         return identifier;
-    }
-
-    public AbstractEdge getOutEdge(AbstractVertex v) {
-        for (AbstractEdge e : out) {
-            if (e.to().equals(v)) {
-                return e;
-            }
-        }
-        return null;
     }
 }

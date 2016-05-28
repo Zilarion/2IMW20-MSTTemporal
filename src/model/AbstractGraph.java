@@ -5,8 +5,8 @@ import java.util.HashMap;
 /**
  * Created by ruudandriessen on 11/05/16.
  */
-public abstract class AbstractGraph {
-    protected HashMap<Long, AbstractVertex> vertices;
+public abstract class AbstractGraph<V> {
+    protected HashMap<Long, V> vertices;
 
     /**
      * Creates an abstract graph by initializing the vertices map
@@ -24,7 +24,7 @@ public abstract class AbstractGraph {
         return vertices.containsKey(identifier);
     }
 
-    public HashMap<Long, AbstractVertex> getVertices() {
+    public HashMap<Long, V> getVertices() {
         return vertices;
     }
 }
