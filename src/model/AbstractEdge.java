@@ -6,7 +6,6 @@ package model;
 public abstract class AbstractEdge {
     protected AbstractVertex from, to;
     protected float weight; // :TODO: check if weight is a float or always an int
-    // :TODO: check where weight should be, TemporalEdge, Edge or AbstractEdge
 
     /**
      * Creates a new edge given a from and to vertex
