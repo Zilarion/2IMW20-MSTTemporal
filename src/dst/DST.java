@@ -2,7 +2,6 @@ package dst;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by ruudandriessen on 25/05/16.
@@ -27,8 +26,8 @@ public class DST {
             HashMap<Integer, DSTVertex> virtualHash = new HashMap<>();
             virtualHash.put(v.virtualId(), v);
             this.virtualVertices.put(v.id(), virtualHash);
+            this.virtualVertices.get(v.id()).put(v.virtualId(), v);
         }
-        this.virtualVertices.put(v.id(), new HashMap<>());
     }
 
     public void addEdge(DSTEdge e) {
@@ -63,8 +62,16 @@ public class DST {
         }
     }
 
-    public HashMap<Long, HashMap<Integer, DSTVertex>> getVirtualVertices() {
-        return this.virtualVertices;
+    public HashMap<Integer, DSTVertex> getVirtualVerticesOfId(long id) {
+        return virtualVertices.get(id);
+    }
+
+    public ArrayList<DSTVertex> getVirtualVertices() {
+        ArrayList<DSTVertex> vertices = new ArrayList<>();
+        for (HashMap<Integer, DSTVertex> virtualVMap : virtualVertices.values()) {
+            vertices.addAll(virtualVMap.values());
+        }
+        return vertices;
     }
 
     @Override

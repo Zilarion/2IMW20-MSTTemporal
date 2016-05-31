@@ -3,8 +3,8 @@ package model;
 /**
  * Created by ruudandriessen on 11/05/16.
  */
-public abstract class AbstractEdge {
-    protected AbstractVertex from, to;
+public abstract class AbstractEdge<T> {
+    protected T from, to;
     protected float weight; // :TODO: check if weight is a float or always an int
 
     /**
@@ -12,7 +12,7 @@ public abstract class AbstractEdge {
      * @param from The vertex this edge starts from
      * @param to The vertex this edge goes to
      */
-    public AbstractEdge(AbstractVertex from, AbstractVertex to) {
+    public AbstractEdge(T from, T to) {
         this.from = from;
         this.to = to;
     }
@@ -20,7 +20,7 @@ public abstract class AbstractEdge {
      * Sets the vertex this edge comes from
      * @param from The vertex this edge comes from
      */
-    public void setFrom(AbstractVertex from) {
+    public void setFrom(T from) {
         this.from = from;
     }
 
@@ -28,7 +28,7 @@ public abstract class AbstractEdge {
      * Sets the vertex this edge goes to
      * @param to The vertex this edge goes to
      */
-    public void setTo(AbstractVertex to) {
+    public void setTo(T to) {
         this.to = to;
     }
 
@@ -53,7 +53,7 @@ public abstract class AbstractEdge {
      * The vertex this edge is from
      * @return The from vertex
      */
-    public AbstractVertex from() {
+    public T from() {
         return from;
     }
 
@@ -61,7 +61,7 @@ public abstract class AbstractEdge {
      * The vertex this edge is to
      * @return The to vertex
      */
-    public AbstractVertex to() {
+    public T to() {
         return to;
     }
 

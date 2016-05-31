@@ -3,7 +3,7 @@ package model;
 /**
  * Created by ruudandriessen on 11/05/16.
  */
-public class TemporalEdge extends AbstractEdge {
+public class TemporalEdge extends AbstractEdge<TemporalVertex> {
     private float start, end; // :TODO: check if start and end are required or only a single time is required
 
     public TemporalEdge(TemporalVertex from, TemporalVertex to) {
@@ -54,22 +54,6 @@ public class TemporalEdge extends AbstractEdge {
      */
     public float end() {
         return end;
-    }
-
-    /**
-     * The temporal vertex this edge is from
-     * @return The from temporal vertex
-     */
-    public TemporalVertex from() {
-        return (TemporalVertex) from;
-    }
-
-    /**
-     * The temporal vertex this edge is to
-     * @return The to temporal vertex
-     */
-    public TemporalVertex to() {
-        return (TemporalVertex) to;
     }
 
     @Override

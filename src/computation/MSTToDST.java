@@ -29,11 +29,11 @@ public class MSTToDST {
     private static void fillVertices(TemporalGraph T, DST dst) {
         HashMap<Long, TemporalVertex> vertices = T.getVertices();
 
-        long id = 0;
         // Execute for each vertex in G
-        for (TemporalVertex v : vertices.values()) {
+        for (long id = 0; id < vertices.size(); id++) {
+            TemporalVertex v = vertices.get(id);
             if (id > 0) {
-                ArrayList<TemporalEdge> inEdges = sortEdges(v);
+                ArrayList<TemporalEdge> inEdges = sortEdges(v.in());
 
                 // Create virtual vertices for each incoming edge from T in the DST
                 DSTVertex previousVertex = null;
@@ -41,8 +41,8 @@ public class MSTToDST {
                     // Get the next edge
                     TemporalEdge e = inEdges.get(i);
 
-                    // Create new vertex
-                    DSTVertex newVertex = new DSTVertex(id, i);
+                    // Create new vertex (i+1) to match up with paper, could be just i as virtualId as well
+                    DSTVertex newVertex = new DSTVertex(id, i + 1, e.start());
 
                     // Add edge from previously created vertex to the new vertex
                     if (previousVertex != null) {
@@ -63,12 +63,11 @@ public class MSTToDST {
                 if (previousVertex != null) {
                     addEdge(dst, previousVertex, dummyVertex, 0);
                 }
-                dst.addVirtualVertex(dummyVertex);
+                dst.addDummyVertex(dummyVertex);
             } else {
                 // Take this as the root
-                dst.addDummyVertex(new DSTVertex(0));
+                dst.addVirtualVertex(new DSTVertex(0, 1, Float.MAX_VALUE));
             }
-            id++;
         }
     }
 
@@ -81,20 +80,53 @@ public class MSTToDST {
 
     private static void fillEdges(TemporalGraph T, DST dst) {
         ArrayList<TemporalEdge> edges = T.edges();
-        HashMap<Long, HashMap<Integer, DSTVertex>> vVertices = dst.getVirtualVertices();
-
-        long id = 0;
         for (TemporalEdge e : edges) {
-//            for (DSTVertex v : vVertices.get()) {
+            System.out.println("--------------------------");
+            // Initialize ui (start) and vi (end) to null
+            DSTVertex start = null, end = null;
 
-//            }
+            // Get virtual vertices with the id similar to the edge from (possible ui's)
+           ArrayList<DSTVertex> virtualVertices = dst.getVirtualVertices();
+            System.out.println("--- ui ---");
+            // Find ui
+            for (DSTVertex v : virtualVertices) {
+                long id = v.virtualId();
+                DSTVertex next = dst.getVirtualVerticesOfId(v.id()).get(id+1);
+                System.out.println("Checking if: " + e.start() + " <= " + v.virtualTime());
+                System.out.println("Checking if " + (id+1) + " is in set.. ");
+                if (next != null) {
+                    System.out.println("Checking if: " + next.virtualTime() + " > " + e.start());
+                }
+                // tui <= tu && tui+1 > tu
+                if (e.start() <= v.virtualTime() && (next == null || next.virtualTime() > e.start())) {
+                    // This is a match
+                    start = v;
+                    break;
+                }
+            }
+            System.out.println("--- vi ---");
+
+            // Find vi by using the virtual vertices of to (possible vi's)
+            for (DSTVertex v : virtualVertices) {
+                System.out.println("Checking if: " + e.start() + " = " + v.virtualTime());
+                if (e.end() == v.virtualTime()) { // tvj == tv
+                    end = v;
+                    break;
+                }
+            }
+            if (start != null && end != null) {
+                // Add this new edge
+                dst.addEdge(new DSTEdge(start, end, e.weight()));
+            } else {
+                System.out.println("Failed to process edge " + e.from().getIdentifier() + " -> " + e.to().getIdentifier());
+                System.out.println(start + " / " + end);
+            }
         }
 
     }
 
-    private static ArrayList<TemporalEdge> sortEdges(TemporalVertex v) {
-        ArrayList<TemporalEdge> edges = v.in();
-        Collections.sort(edges, (e1, e2) -> Float.compare(e1.end(), e2.end()));
+    private static ArrayList<TemporalEdge> sortEdges(ArrayList<TemporalEdge> edges) {
+        Collections.sort(edges, (e1, e2) -> Float.compare(e1.start(), e2.start()));
         return edges;
     }
 }

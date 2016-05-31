@@ -5,9 +5,9 @@ package dst;
  */
 public class DSTEdge {
     private DSTVertex from, to;
-    private int weight;
+    private float weight;
 
-    public DSTEdge(DSTVertex from, DSTVertex to, int weight) {
+    public DSTEdge(DSTVertex from, DSTVertex to, float weight) {
         this.from = from;
         this.to = to;
         this.weight = weight;

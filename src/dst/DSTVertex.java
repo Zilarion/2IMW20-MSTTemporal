@@ -9,13 +9,14 @@ public class DSTVertex {
     private long id;
     private int virtualId;
     private ArrayList<DSTEdge> out, in;
+    private float virtualTime;
 
     /**
      * Create non-virtual vertex (virtualid == -1)
      * @param id The identifier of the vertex
      */
     public DSTVertex(long id) {
-        this(id, -1);
+        this(id, -1, -1);
     }
 
     /**
@@ -23,9 +24,10 @@ public class DSTVertex {
      * @param id The identifier of the vertex
      * @param virtualId The virtual identifier of the vertex
      */
-    public DSTVertex(long id, int virtualId) {
+    public DSTVertex(long id, int virtualId, float virtualTime) {
         this.id = id;
         this.virtualId = virtualId;
+        this.virtualTime = virtualTime;
         out = new ArrayList<>();
         in = new ArrayList<>();
     }
@@ -45,4 +47,6 @@ public class DSTVertex {
     public void addInEdge(DSTEdge e) {
         this.in.add(e);
     }
+
+    public float virtualTime() { return virtualTime; }
 }
