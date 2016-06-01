@@ -1,6 +1,7 @@
 package parsing;
 
 import computation.MSTToDST;
+import computation.MSTwOld;
 import model.*;
 
 import javax.swing.*;
@@ -116,6 +117,8 @@ public class Parser {
                 long startTime = 0, endTime = 0;
                 if (fromTimeColumn != -1) {
                     startTime = Long.parseLong(data[fromTimeColumn]);
+                } else {
+                    startTime = Long.parseLong(data[toTimeColumn]);
                 }
                 endTime = Long.parseLong(data[toTimeColumn]);
                 edge.setStart(startTime);
@@ -170,7 +173,7 @@ public class Parser {
                             System.out.print("Column containing the end time: ");
                             int end = scan.nextInt();
                             TemporalGraph tg = parser.parse(chooser.getSelectedFile(), skip, from, to, weight, start, end);
-                            System.out.println(MSTToDST.transformTemporal(tg));
+                            new MSTwOld().run(tg);
                         } else {
                             System.out.println(parser.parse(chooser.getSelectedFile(), skip, from, to, weight));
                         }
