@@ -13,6 +13,9 @@ import java.util.*;
  */
 public class MSTwOld extends Algorithm {
 
+    /**
+     * This is infinity
+     */
     float infinity = Float.POSITIVE_INFINITY;
 
     @Override
@@ -24,7 +27,7 @@ public class MSTwOld extends Algorithm {
             throw new IllegalArgumentException("Cannot use MSTw without temporal graph");
         }
 
-        // Assume interval to be [0, inf)
+        // Assume interval to be [0, inf) and get root
         ArrayList<Long> vKeys = new ArrayList<>(g.getVertices().keySet());
         Collections.sort(vKeys);
         TemporalVertex root = g.getVertex(vKeys.get(0));
@@ -40,12 +43,14 @@ public class MSTwOld extends Algorithm {
 
         // do algorithm 3 (page 424)
 
+
         // do postprocessing (page 424)
+        
     }
 
     /**
-     * Floyd Wharshall algorithm..
-     * @param graph
+     * This method uses Floyd Wharshalls algorithm to turn the graph into the transitive closure of it.
+     * @param graph The graph of which you want to get the transitive closure from.
      */
     public void createTransitiveClosure(TGraph graph) {
         // matrix containing all distances
@@ -87,14 +92,22 @@ public class MSTwOld extends Algorithm {
         }
     }
 
+    /**
+     * Transform graph using the steps on page 423.
+     * @param graph The graph you need to transform.
+     * @param root The root vertex of that graph.
+     * @return The transformed graph.
+     */
     public TGraph transform(TemporalGraph graph, TemporalVertex root) {
         TGraph transformed = new TGraph();
         Map<TemporalVertex, List<TVertex>> map = new HashMap<>();
+        // For each vertex..
         for (TemporalVertex vertex : graph.getVertices().values()) {
             // Start step 1
-            // This is set T(v)
+            // Determine set T(v)
             Set<Float> tv = new TreeSet<>();
             if (vertex == root) {
+                // If root, then T(v) = {0}
                 tv.add(0f);
             } else {
                 for (TemporalEdge e : vertex.in()) {
@@ -102,7 +115,7 @@ public class MSTwOld extends Algorithm {
                 }
             }
 
-            // Step 1a
+            // Step 1a: Create the virtual vertices
             List<TVertex> vv = new ArrayList<>();
             int count = 1;
             for (float time : tv) {
@@ -114,7 +127,7 @@ public class MSTwOld extends Algorithm {
                 }
                 count++;
             }
-            // Step 1b
+            // Step 1b: Create dummy vertices for non-roots
             if (vertex != root) {
                 TVertex v = new TVertex(Long.toString(vertex.getIdentifier()), vertex.getIdentifier(), infinity);
                 vv.add(v);
@@ -123,7 +136,7 @@ public class MSTwOld extends Algorithm {
 
 
             // Start step 2
-            // Step 2a
+            // Step 2a create the virtual edges
             for (int i = 1; i < vv.size(); i++) {
                 TEdge e = new TEdge(vv.get(i - 1), vv.get(i), 0);
                 transformed.addEdge(e);
@@ -132,6 +145,7 @@ public class MSTwOld extends Algorithm {
             map.put(vertex, vv);
         }
 
+        // Step 2b: Find the correct vertices and create solid edges
         for (TemporalEdge edge : graph.edges()) {
             List<TVertex> vertices = map.get(edge.from());
             TVertex from = null;
