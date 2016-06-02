@@ -49,6 +49,26 @@ public class TGraph {
         vertices.add(vertex);
     }
 
+    public int cost() {
+        int cost = 0;
+        for (TEdge e : edges) {
+            cost += e.weight();
+        }
+        return cost;
+    }
+
+    public float density() {
+        if (terminals.size() == 0) {
+            return Float.MAX_VALUE;
+        }
+        return ( (float) cost() / (float)terminals.size());
+    }
+
+    public void merge(TGraph g) {
+        vertices.addAll(g.getVertices());
+        edges.addAll(g.edges());
+        terminals.addAll(g.terminals);
+    }
 
     @Override
     public String toString() {

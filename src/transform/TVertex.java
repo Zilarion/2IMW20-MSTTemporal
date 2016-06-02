@@ -2,6 +2,8 @@ package transform;
 
 
 import model.Edge;
+import model.TemporalEdge;
+import model.TemporalVertex;
 import model.Vertex;
 
 import java.util.ArrayList;
@@ -66,4 +68,13 @@ public class TVertex {
         return this.identifier + " " + time;
     }
 
+
+    public TEdge getOutEdge(TVertex v) {
+        for (TEdge e : out) {
+            if (e.to().equals(v)) {
+                return e;
+            }
+        }
+        return null;
+    }
 }
