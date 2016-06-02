@@ -4,10 +4,12 @@ import model.AbstractGraph;
 import model.TemporalGraph;
 import model.TemporalVertex;
 import transform.TGraph;
+import transform.TVertex;
 import transform.Transform;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by ruudandriessen on 25/05/16.
@@ -38,15 +40,34 @@ public class MSTwOld extends Algorithm {
 
         // do algorithm 3 (page 424)
         System.out.println("Apply algorithm 3..");
-        this.algorithm3(transformed, 1);
-        System.out.println(transformed);
+        System.out.println(this.algorithm3(transformed, 1));
 
         // do postprocessing (page 424)
-        
+
     }
 
-    public void algorithm3(TGraph graph, int i) {
+    public TGraph algorithm3(TGraph graph, int i) {
+        TGraph T = new TGraph();
 
+        int k = graph.terminals.size();
+        List<TVertex> X = new ArrayList<>(graph.terminals);
+        TVertex r = graph.root;
+
+        if (i == 1) {
+            while (k > 0) {
+                TVertex v;
+                for (TVertex )
+                //(r, v)=arg(r, v) min cost (r, v),forall v IN X;
+                //T = T union(r, v);
+
+                k--;
+                X.remove(v);
+            }
+        } else {
+
+        }
+
+        return T;
     }
 
 }
