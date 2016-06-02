@@ -37,15 +37,20 @@ public class MSTwOld extends Algorithm {
         TGraph transformed = this.transform(g, root);
 
         // Create transitive closure
-        System.out.println("Creating transative closure..");
+        System.out.println("Creating transitive closure..");
         this.createTransitiveClosure(transformed);
-        System.out.println(transformed);
 
         // do algorithm 3 (page 424)
-
+        System.out.println("Apply algorithm 3..");
+        this.algorithm3(transformed, 1);
+        System.out.println(transformed);
 
         // do postprocessing (page 424)
         
+    }
+
+    public void algorithm3(TGraph graph, int i) {
+
     }
 
     /**
@@ -131,6 +136,7 @@ public class MSTwOld extends Algorithm {
             if (vertex != root) {
                 TVertex v = new TVertex(Long.toString(vertex.getIdentifier()), vertex.getIdentifier(), infinity);
                 vv.add(v);
+                transformed.terminals.add(v);
                 transformed.addVertex(v);
             }
 

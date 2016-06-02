@@ -15,6 +15,7 @@ import java.util.List;
 public class TGraph {
     protected ArrayList<TVertex> vertices;
     protected ArrayList<TEdge> edges;
+    public final ArrayList<TVertex> terminals;
     public TVertex root;
 
     /**
@@ -23,6 +24,7 @@ public class TGraph {
     public TGraph() {
         vertices = new ArrayList<>();
         edges = new ArrayList<>();
+        terminals = new ArrayList<>();
     }
 
     public List<TVertex> getVertices() {
