@@ -8,14 +8,14 @@ import model.Vertex;
  */
 public class TEdge {
     protected TVertex from, to;
-    protected float weight; // :TODO: check if weight is a float or always an int
+    protected int weight;
 
     /**
      * Creates a new edge given a from and to vertex
      * @param from The vertex this edge starts from
      * @param to The vertex this edge goes to
      */
-    public TEdge(TVertex from, TVertex to, float weight) {
+    public TEdge(TVertex from, TVertex to, int weight) {
         this.from = from;
         this.to = to;
         this.weight = weight;
@@ -43,7 +43,7 @@ public class TEdge {
      * Sets the weight of the edge
      * @param weight The weight of the edge
      */
-    public void setWeight(float weight) {
+    public void setWeight(int weight) {
         this.weight = weight;
     }
 
@@ -51,7 +51,7 @@ public class TEdge {
      * Returns the weight of the edge
      * @return The weight of the edge
      */
-    public float weight() {
+    public int weight() {
         return weight;
     }
 

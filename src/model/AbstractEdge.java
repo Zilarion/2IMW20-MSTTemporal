@@ -5,7 +5,7 @@ package model;
  */
 public abstract class AbstractEdge<T> {
     protected T from, to;
-    protected float weight; // :TODO: check if weight is a float or always an int
+    protected int weight;
 
     /**
      * Creates a new edge given a from and to vertex
@@ -36,7 +36,7 @@ public abstract class AbstractEdge<T> {
      * Sets the weight of the edge
      * @param weight The weight of the edge
      */
-    public void setWeight(float weight) {
+    public void setWeight(int weight) {
         this.weight = weight;
     }
 
@@ -44,7 +44,7 @@ public abstract class AbstractEdge<T> {
      * Returns the weight of the edge
      * @return The weight of the edge
      */
-    public float weight() {
+    public int weight() {
         return weight;
     }
 
