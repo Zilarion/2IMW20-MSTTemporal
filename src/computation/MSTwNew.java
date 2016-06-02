@@ -27,8 +27,11 @@ public class MSTwNew extends Algorithm {
             ArrayList<TVertex> X = T.terminals;
             int k = X.size();
 
+            System.out.println("--------------");
             System.out.println("Running huang i=1");
-            huang(1, k, T.root, X, T);
+            TGraph result = huang(1, k, T.root, X, T);
+            System.out.println(result);
+            System.out.println("--------------");
             System.out.println("Running huang i=2");
             huang(2, k, T.root, X, T);
         } else {
@@ -42,6 +45,7 @@ public class MSTwNew extends Algorithm {
                 return i;
             }
         }
+        return -1;
     }
 
     /**
@@ -113,6 +117,7 @@ public class MSTwNew extends Algorithm {
             while (k > 0) {
                 // (r,v) <- arg_(r,v) min cost(r, v) FORALL v in X
                 TEdge minEdge = minCost(X, r);
+
             }
         } else {
 

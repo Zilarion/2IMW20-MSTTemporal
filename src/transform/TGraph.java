@@ -1,12 +1,6 @@
 package transform;
 
-import model.AbstractGraph;
-import model.Edge;
-import model.Vertex;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -72,15 +66,13 @@ public class TGraph {
 
     @Override
     public String toString() {
-        return "Transformed graph with " + edges.size() + " edges and " + vertices.size() + " vertices";
-//        String result = "Transformed graph {\n";
-//        for (TVertex v : vertices) {
-//            result += "\t" + v.toString() + "\n";
-//        }
-//        for (TEdge e : edges) {
-//            result += "\t" + e.toString() + "\n";
-//        }
-//        result += "}";
-//        return result;
+        String result = "digraph DST {\n";
+
+        for (TEdge e : edges) {
+            result += e.toString() + "\n";
+        }
+
+        result += "}";
+        return result;
     }
 }
