@@ -29,10 +29,65 @@ public class MSTwOld extends Algorithm {
         Collections.sort(vKeys);
         TemporalVertex root = g.getVertex(vKeys.get(0));
 
-        this.transform(g, root);
+        // Transform graph (page 423)
+        System.out.println("Creating transformed graph..");
+        TGraph transformed = this.transform(g, root);
+
+        // Create transitive closure
+        System.out.println("Creating transative closure..");
+        this.createTransitiveClosure(transformed);
+        System.out.println(transformed);
+
+        // do algorithm 3 (page 424)
+
+        // do postprocessing (page 424)
     }
 
-    public void transform(TemporalGraph graph, TemporalVertex root) {
+    /**
+     * Floyd Wharshall algorithm..
+     * @param graph
+     */
+    public void createTransitiveClosure(TGraph graph) {
+        // matrix containing all distances
+        float[][] dist = new float[graph.getVertices().size()][graph.getVertices().size()];
+        float[][] orig = new float[graph.getVertices().size()][graph.getVertices().size()];
+
+        for (int i = 0; i < dist.length; i++) {
+            for (int j = 0; j < dist[i].length; j++) {
+                dist[i][j] = infinity;
+                orig[i][j] = infinity;
+            }
+            for (TEdge edge : graph.getVertices().get(i).out()) {
+                int j = graph.getVertices().indexOf(edge.to());
+                if (edge.weight() < dist[i][j]) {
+                    dist[i][j] = edge.weight();
+                    orig[i][j] = edge.weight();
+                }
+            }
+        }
+
+        for (int k = 0; k < graph.getVertices().size(); k++) {
+            for (int i = 0; i < graph.getVertices().size(); i++) {
+                for (int j = 0; j < graph.getVertices().size(); j++) {
+                    if (dist[i][k] != infinity && dist[k][j] != infinity) {
+                        if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                            dist[i][j] = dist[i][k] + dist[k][j];
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < dist.length; i++) {
+            for (int j = 0; j < dist.length; j++) {
+                if (dist[i][j] != orig[i][j]) {
+                    graph.addEdge(new TEdge(graph.getVertices().get(i),  graph.getVertices().get(j), dist[i][j]));
+                }
+            }
+        }
+    }
+
+    public TGraph transform(TemporalGraph graph, TemporalVertex root) {
         TGraph transformed = new TGraph();
         Map<TemporalVertex, List<TVertex>> map = new HashMap<>();
         for (TemporalVertex vertex : graph.getVertices().values()) {
@@ -54,6 +109,9 @@ public class MSTwOld extends Algorithm {
                 TVertex v = new TVertex(vertex.getIdentifier() + "_" + count, vertex.getIdentifier(), time);
                 vv.add(v);
                 transformed.addVertex(v);
+                if (vertex == root) {
+                    transformed.root = v;
+                }
                 count++;
             }
             // Step 1b
@@ -98,7 +156,7 @@ public class MSTwOld extends Algorithm {
                 transformed.addEdge(e);
             }
         }
-        System.out.println(transformed);
+        return transformed;
 
     }
 }
