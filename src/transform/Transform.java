@@ -98,6 +98,7 @@ public class Transform {
             if (vertex != root) {
                 TVertex v = new TVertex(Long.toString(vertex.getIdentifier()), vertex.getIdentifier(), infinity);
                 vv.add(v);
+                transformed.terminals.add(v);
                 transformed.addVertex(v);
             }
 
