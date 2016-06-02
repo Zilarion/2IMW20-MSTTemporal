@@ -3,6 +3,7 @@ package computation;
 import model.AbstractGraph;
 import model.TemporalGraph;
 import model.TemporalVertex;
+import transform.TEdge;
 import transform.TGraph;
 import transform.TVertex;
 import transform.Transform;
@@ -52,16 +53,30 @@ public class MSTwOld extends Algorithm {
         int k = graph.terminals.size();
         List<TVertex> X = new ArrayList<>(graph.terminals);
         TVertex r = graph.root;
+        T.addVertex(r);
 
         if (i == 1) {
             while (k > 0) {
-                TVertex v;
-                for (TVertex )
-                //(r, v)=arg(r, v) min cost (r, v),forall v IN X;
-                //T = T union(r, v);
-
-                k--;
-                X.remove(v);
+                TVertex vertexMin = X.get(0);
+                TEdge edgeMin = null;
+                int min = Transform.infinity;
+                for (TVertex _v : X) {
+                    for (TEdge _e : _v.in()) {
+                        if (_e.from() == r) {
+                            if (_e.weight() < min) {
+                                min = _e.weight();
+                                vertexMin = _v;
+                                edgeMin = _e;
+                            }
+                        }
+                    }
+                }
+                if (edgeMin != null) {
+                    T.addVertex(vertexMin);
+                    T.addEdge(edgeMin);
+                    k--;
+                    X.remove(vertexMin);
+                }
             }
         } else {
 

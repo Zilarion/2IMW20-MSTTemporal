@@ -13,7 +13,7 @@ public class Transform {
     /**
      * This is infinity
      */
-    static int infinity = Integer.MAX_VALUE;
+    public static int infinity = Integer.MAX_VALUE;
 
     /**
      * This method uses Floyd Wharshalls algorithm to turn the graph into the transitive closure of it.
