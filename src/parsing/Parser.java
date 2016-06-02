@@ -38,9 +38,9 @@ public class Parser {
                 String[] data = line.trim().split("\\s+");
                 long from = Long.parseLong(data[fromColumn]);
                 long to = Long.parseLong(data[toColumn]);
-                long weight = 0;
+                int weight = 0;
                 if (weightColumn != -1) {
-                    weight = Long.parseLong(data[weightColumn]);
+                    weight = Integer.parseInt(data[weightColumn]);
                 }
 
                 Vertex fromV, toV;
@@ -93,9 +93,9 @@ public class Parser {
                 String[] data = line.trim().split("\\s+");
                 long from = Long.parseLong(data[fromColumn]);
                 long to = Long.parseLong(data[toColumn]);
-                long weight = 0;
+                int weight = 0;
                 if (weightColumn != -1) {
-                    weight = Long.parseLong(data[weightColumn]);
+                    weight = Integer.parseInt(data[weightColumn]);
                 }
 
                 TemporalVertex fromV, toV;

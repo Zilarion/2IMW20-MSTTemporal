@@ -2,7 +2,11 @@ package computation;
 
 import model.*;
 import dst.DST;
+import transform.TGraph;
+import transform.TVertex;
+import transform.Transform;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,10 +17,26 @@ public class MSTwNew extends Algorithm {
     public void run(AbstractGraph graph) {
         if (graph instanceof TemporalGraph) {
             TemporalGraph g = (TemporalGraph) graph;
-//            dst = transform(g)
-//            huang(dst)
+
+            int index = findRoot(g);
+            TGraph T = Transform.transform(g, g.getVertex(index));
+            Transform.createTransitiveClosure(T);
+
+
+            ArrayList<TVertex> X = graph.terminals;
+            int k = X.size();
+
+            huang(2, k, g.getVertex(index), X, graph);
         } else {
             throw new IllegalArgumentException("Cannot use MSTw without temporal graph");
+        }
+    }
+
+    private int findRoot(TemporalGraph g) {
+        for (int i = 0; i < g.getVertices().size(); i++) {
+            if (g.getVertex(i) != null) {
+                return i;
+            }
         }
     }
 
@@ -27,54 +47,54 @@ public class MSTwNew extends Algorithm {
      * @param r The root of the tree
      * @param X Terminal set
      */
-    private DST huang(int k, int i, TemporalVertex r, List<TemporalVertex> X, TemporalGraph g) {
-        DST T = new DST();
-//        if (i == 1) {
-//            while (k > 0) {
-//                // (r,v) <- arg_(r,v) min cost(r, v) FORALL v in X
-//                float minCost = Float.MAX_VALUE;
-//                TemporalEdge minEdge = null; // (r,v)
-//                for (TemporalVertex v : X) { // For all v : X get v with min cost
-//                    TemporalEdge e = r.getOutEdge(v);
-//                    if (e.weight() < minCost) {
-//                        minEdge = e;
-//                        minCost = e.weight();
-//                    }
-//                }
-//
-//                // add (r,v) to T
-//                T.add(minEdge);
-//
-//                // k <- k - 1
-//                k -= 1;
-//
-//                // remove v from x
-//                X.remove(minEdge.to());
-//            }
-//        } else {
-//            while (k > 0) {
-//                // TBest <- empty density(TBest) = infinity
-//                DST TBest = null;
-//                float bestDensity = Float.MAX_VALUE;
-//
-//                // foreach vertex v in V do
-//                for (TemporalVertex v : g.getVertices().values()) {
-//                    // Get (r,v)
-//                    TemporalEdge e = r.getOutEdge(v);
-//                    // Call other algorithm
-//                    DST TPrime = huangB(i-1, k, v, X, e);
-//
-//                    float TPrimeDensity = TPrime.density();
-//                    if (bestDensity > TPrimeDensity) {
-//                        bestDensity = TPrimeDensity;
-//                    }
-//
-//                    T.merge(TBest);
-//                    k = k - X.size() INTERSECT V(TBest);
-//                    X.removeAll(TBest.vertices());
-//                }
-//            }
-//        }
+    private TGraph huang(int i, int k, TemporalVertex r, List<TVertex> X, TGraph g) {
+        TGraph T = new TGraph();
+        if (i == 1) {
+            while (k > 0) {
+                // (r,v) <- arg_(r,v) min cost(r, v) FORALL v in X
+                float minCost = Float.MAX_VALUE;
+                TemporalEdge minEdge = null; // (r,v)
+                for (TVertex v : X) { // For all v : X get v with min cost
+                    TemporalEdge e = r.getOutEdge(v);
+                    if (e.weight() < minCost) {
+                        minEdge = e;
+                        minCost = e.weight();
+                    }
+                }
+
+                // add (r,v) to T
+                T.add(minEdge);
+
+                // k <- k - 1
+                k -= 1;
+
+                // remove v from x
+                X.remove(minEdge.to());
+            }
+        } else {
+            while (k > 0) {
+                // TBest <- empty density(TBest) = infinity
+                DST TBest = null;
+                float bestDensity = Float.MAX_VALUE;
+
+                // foreach vertex v in V do
+                for (TemporalVertex v : g.getVertices().values()) {
+                    // Get (r,v)
+                    TemporalEdge e = r.getOutEdge(v);
+                    // Call other algorithm
+                    DST TPrime = huangB(i-1, k, v, X, e);
+
+                    float TPrimeDensity = TPrime.density();
+                    if (bestDensity > TPrimeDensity) {
+                        bestDensity = TPrimeDensity;
+                    }
+
+                    T.merge(TBest);
+                    k = k - X.size() INTERSECT V(TBest);
+                    X.removeAll(TBest.vertices());
+                }
+            }
+        }
         return T;
     }
 
