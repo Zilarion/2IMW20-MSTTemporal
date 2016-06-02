@@ -65,7 +65,7 @@ public class TVertex {
 
     @Override
     public String toString() {
-        return "\"" + this.identifier.replace("_", "-") + "\"";
+        return "\"" + this.identifier + "\"";
     }
 
 
