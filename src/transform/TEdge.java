@@ -74,7 +74,7 @@ public class TEdge {
 
     @Override
     public String toString() {
-        String label = "\"[" + this.weight() + "]\"";
-        return from.getIdentifier() + " -> " + to.getIdentifier() + " [label=" + label + "]";
+        String label = "\"[" + weight + "]\"";
+        return from.toString() + " -> " + to.toString() + "[label=" + label + "]";
     }
 }

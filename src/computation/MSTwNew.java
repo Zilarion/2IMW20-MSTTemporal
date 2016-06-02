@@ -1,7 +1,8 @@
 package computation;
 
-import model.*;
-import dst.DST;
+import model.AbstractGraph;
+import model.TemporalGraph;
+import transform.TEdge;
 import transform.TGraph;
 import transform.TVertex;
 import transform.Transform;
@@ -23,10 +24,16 @@ public class MSTwNew extends Algorithm {
             Transform.createTransitiveClosure(T);
 
 
-            ArrayList<TVertex> X = graph.terminals;
+            ArrayList<TVertex> X = T.terminals;
             int k = X.size();
 
-            huang(2, k, g.getVertex(index), X, graph);
+            System.out.println("--------------");
+            System.out.println("Running huang i=1");
+            TGraph result = huang(1, k, T.root, X, T);
+            System.out.println(result);
+            System.out.println("--------------");
+            System.out.println("Running huang i=2");
+            huang(2, k, T.root, X, T);
         } else {
             throw new IllegalArgumentException("Cannot use MSTw without temporal graph");
         }
@@ -38,6 +45,7 @@ public class MSTwNew extends Algorithm {
                 return i;
             }
         }
+        return -1;
     }
 
     /**
@@ -47,23 +55,15 @@ public class MSTwNew extends Algorithm {
      * @param r The root of the tree
      * @param X Terminal set
      */
-    private TGraph huang(int i, int k, TemporalVertex r, List<TVertex> X, TGraph g) {
+    private TGraph huang(int i, int k, TVertex r, List<TVertex> X, TGraph g) {
         TGraph T = new TGraph();
         if (i == 1) {
             while (k > 0) {
                 // (r,v) <- arg_(r,v) min cost(r, v) FORALL v in X
-                float minCost = Float.MAX_VALUE;
-                TemporalEdge minEdge = null; // (r,v)
-                for (TVertex v : X) { // For all v : X get v with min cost
-                    TemporalEdge e = r.getOutEdge(v);
-                    if (e.weight() < minCost) {
-                        minEdge = e;
-                        minCost = e.weight();
-                    }
-                }
+                TEdge minEdge = minCost(X, r);
 
                 // add (r,v) to T
-                T.add(minEdge);
+                T.addEdge(minEdge);
 
                 // k <- k - 1
                 k -= 1;
@@ -74,24 +74,28 @@ public class MSTwNew extends Algorithm {
         } else {
             while (k > 0) {
                 // TBest <- empty density(TBest) = infinity
-                DST TBest = null;
+                TGraph TBest = null;
                 float bestDensity = Float.MAX_VALUE;
 
                 // foreach vertex v in V do
-                for (TemporalVertex v : g.getVertices().values()) {
+                for (TVertex v : g.getVertices()) {
                     // Get (r,v)
-                    TemporalEdge e = r.getOutEdge(v);
+                    TEdge e = r.getOutEdge(v);
                     // Call other algorithm
-                    DST TPrime = huangB(i-1, k, v, X, e);
+                    TGraph TPrime = huangB(i-1, k, v, X, e);
 
                     float TPrimeDensity = TPrime.density();
                     if (bestDensity > TPrimeDensity) {
                         bestDensity = TPrimeDensity;
                     }
 
+                    // T = T union Tbest
                     T.merge(TBest);
-                    k = k - X.size() INTERSECT V(TBest);
-                    X.removeAll(TBest.vertices());
+                    // X intersection V(Tbest) and X <- X intersection V(Tbest)
+                    X.retainAll(TBest.getVertices());
+
+                    // k <- k - V(Tbest)
+                    k = k - TBest.getVertices().size();
                 }
             }
         }
@@ -107,15 +111,31 @@ public class MSTwNew extends Algorithm {
      * @param e The incoming edge of r
      * @return : A tree T with height i rooted at r covering at most k terminals in X so that the density of T U e is the smallest
      */
-    private DST huangB(int i, int k, TemporalVertex r, List<TemporalVertex> X, TemporalEdge e) {
-        DST dst = new DST();
+    private TGraph huangB(int i, int k, TVertex r, List<TVertex> X, TEdge e) {
+        TGraph dst = new TGraph();
         if (i == 1) {
             while (k > 0) {
+                // (r,v) <- arg_(r,v) min cost(r, v) FORALL v in X
+                TEdge minEdge = minCost(X, r);
 
             }
         } else {
 
         }
         return dst;
+    }
+
+    private TEdge minCost(List<TVertex> X, TVertex r) {
+        // (r,v) <- arg_(r,v) min cost(r, v) FORALL v in X
+        float minCost = Float.MAX_VALUE;
+        TEdge minEdge = null; // (r,v)
+        for (TVertex v : X) { // For all v : X get v with min cost
+            TEdge e = r.getOutEdge(v);
+            if (e.weight() < minCost) {
+                minEdge = e;
+                minCost = e.weight();
+            }
+        }
+        return minEdge;
     }
 }
