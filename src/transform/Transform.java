@@ -57,6 +57,12 @@ public class Transform {
                 }
             }
         }
+
+        for (TVertex v : graph.getVertices()) {
+            if (graph.getEdge(v, v) == null) {
+                graph.addEdge(new TEdge(v, v, 0));
+            }
+        }
     }
 
     /**

@@ -41,11 +41,11 @@ public class MSTwOld extends Algorithm {
 
         // do algorithm 3 (page 424)
         System.out.println("Apply algorithm 3..");
-
         int k = transformed.terminals().size();
         List<TVertex> X = new ArrayList<>(transformed.terminals());
         TVertex r = transformed.root;
-        TGraph tree = this.algorithm3(transformed, 2, k, r, X);
+        TGraph tree = this.algorithm3(transformed, 2, k, r, new ArrayList<>(X));
+        
         // do postprocessing (page 424)
         System.out.println(this.doPostProcessing(transformed, tree));
 
@@ -82,57 +82,46 @@ public class MSTwOld extends Algorithm {
                     X.remove(edgeMin.to());
                 }
                 k--;
-
             }
-        } else {
+        } else { // line 6 of algorithm 3
+            // line 7 of algorithm 3
             while (k > 0) {
                 // line 8 of algorithm 3
-                TGraph Tbest = new TGraph();
-                float den = Tbest.den(X.size());
-
+                TGraph T_best = new TGraph();
+                float den = T_best.den(graph.terminals());
                 // line 9 of algorithm 3
                 for (TVertex _v : graph.getVertices()) {
-                    for (int k1 = 1; k1 <= k; k1++) {
+                    for (int k_accent = 1; k_accent <= k; k_accent++) {
 
                         // line 10 of algorithm 3
-                        TGraph T1 = this.algorithm3(graph, i - 1, k1, _v, new ArrayList<>(X));
-                       // System.out.println(T1);
+                        TGraph T_accent = this.algorithm3(graph, i - 1, k_accent, _v, new ArrayList<>(X)); // X shouldn't be passed as reference
                         TEdge _e = graph.getEdge(r, _v);
-                        //System.out.println(_e);
-                        if (_e != null) {
+                        if (_e != null && !T_accent.getVertices().isEmpty()) {
+                            T_accent.addUniqueEdge(_e);
+                        }
 
-                            T1.addUniqueEdge(_e);
-
-                            // line 11 of algorithm 3
-                            float _d = T1.den(X.size());
-                            if (den > _d) {
-                                // line 12 of algorithm 3
-                                den = _d;
-                                Tbest = T1;
-                            }
+                        // line 11 of algorithm 3
+                        float _d = T_accent.den(graph.terminals());
+                        if (den > _d) {
+                            // line 12 of algorithm 3
+                            den = _d;
+                            T_best = T_accent;
                         }
                     }
                 }
 
-
                 // line 13 of algorithm 3
-                System.out.println(k);
-               // System.out.println(Tbest);
-                System.out.println(Tbest);
-                T.merge(Tbest);
-//                for (TVertex _v : Tbest.getVertices()) {
-//                    if (X.contains(_v)) {
-//                        k--;
-//                    }
-//                }
-                k--;
-                X.removeAll(Tbest.getVertices());
-
+                T.merge(T_best);
+                for (TVertex _v : T_best.getVertices()) {
+                    if (X.contains(_v)) {
+                        X.remove(_v);
+                        k--;
+                    }
+                }
             }
         }
 
         // line 14 of algorithm 3
         return T;
     }
-
 }

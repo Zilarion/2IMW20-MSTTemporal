@@ -29,12 +29,17 @@ public class TGraph {
         return this.terminals;
     }
 
-    public float den(int notCovered) {
+    public float den(List<TVertex> terminals) {
         if (this.getVertices().size() == 0) {
             return Float.POSITIVE_INFINITY;
         }
-
-        return ((float) cost() / (float) (this.terminals.size() - notCovered));
+        int covered = 0;
+        for (TVertex v : this.vertices) {
+            if (terminals.contains(v)) {
+                covered++;
+            }
+        }
+        return ((float) cost() / (float) (covered));
     }
 
     public List<TVertex> getVertices() {
