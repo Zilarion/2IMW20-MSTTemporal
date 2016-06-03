@@ -41,47 +41,67 @@ public class MSTwOld extends Algorithm {
 
         // do algorithm 3 (page 424)
         System.out.println("Apply algorithm 3..");
-        System.out.println(this.algorithm3(transformed, 1));
+
+        int k = transformed.terminals.size();
+        List<TVertex> X = new ArrayList<>(transformed.terminals);
+        TVertex r = transformed.root;
+        System.out.println(this.algorithm3(transformed, 1, k, r, X));
 
         // do postprocessing (page 424)
 
     }
 
-    public TGraph algorithm3(TGraph graph, int i) {
+    public TGraph algorithm3(TGraph graph, int i, int k, TVertex r, List<TVertex> X) {
+        // line 1 of algorithm 3
         TGraph T = new TGraph();
 
-        int k = graph.terminals.size();
-        List<TVertex> X = new ArrayList<>(graph.terminals);
-        TVertex r = graph.root;
-        T.addVertex(r);
-
+        // line 2 of algorithm 3
         if (i == 1) {
+            // line 3 of algorithm 3
             while (k > 0) {
-                TVertex vertexMin = X.get(0);
+                // line 4 of algorithm 3
                 TEdge edgeMin = null;
                 int min = Transform.infinity;
                 for (TVertex _v : X) {
-                    for (TEdge _e : _v.in()) {
-                        if (_e.from() == r) {
-                            if (_e.weight() < min) {
-                                min = _e.weight();
-                                vertexMin = _v;
-                                edgeMin = _e;
-                            }
-                        }
+                    TEdge _e = graph.getEdge(r, _v);
+                    if (_e.weight() < min) {
+                        min = _e.weight();
+                        edgeMin = _e;
                     }
                 }
-                if (edgeMin != null) {
-                    T.addVertex(vertexMin);
-                    T.addEdge(edgeMin);
-                    k--;
-                    X.remove(vertexMin);
-                }
+
+                // line 5 of algorithm 3
+                T.addUniqueEdge(edgeMin);
+                k--;
+                X.remove(edgeMin.to());
             }
         } else {
+            while (k > 0) {
+                // line 8 of algorithm 3
+                TGraph Tbest = new TGraph();
+                float dens = Float.POSITIVE_INFINITY;
 
+                // line 9 of algorithm 3
+                for (TVertex _v : graph.getVertices()) {
+                    for (int k1 = 1; k1 <= k; k++) {
+
+                        // line 10 of algorithm 3
+                        TGraph T1 = this.algorithm3(graph, i - 1, k1, _v, X);
+                        T1.addUniqueEdge(graph.getEdge(r, _v));
+
+                        // line 11 of algorithm 3 TODO
+                        // line 12 of algorithm 3 TODO
+                    }
+                }
+
+
+                // line 13 of algorithm 3 TODO
+                // T.merge(Tbest);
+
+            }
         }
 
+        // line 14 of algorithm 3
         return T;
     }
 

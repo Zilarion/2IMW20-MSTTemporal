@@ -29,6 +29,30 @@ public class TGraph {
         this.edges.add(e);
     }
 
+    public void addUniqueEdge(TEdge e) {
+        if (!this.edges.contains(e)) {
+            this.edges.add(e);
+
+            if (!this.vertices.contains(e.from())) {
+                this.vertices.add(e.from());
+            }
+
+            if (!this.vertices.contains(e.to())) {
+                this.vertices.add(e.to());
+            }
+        }
+    }
+
+    public TEdge getEdge(TVertex from, TVertex to) {
+        for (TEdge edge : from.out()) {
+            if (edge.to() == to) {
+                return edge;
+            }
+        }
+
+        return null;
+    }
+
     public ArrayList<TEdge> edges() {
         return edges;
     }
