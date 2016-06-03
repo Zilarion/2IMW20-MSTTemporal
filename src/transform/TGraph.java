@@ -48,7 +48,6 @@ public class TGraph {
     public void addUniqueEdge(TEdge e) {
         if (!this.edges.contains(e)) {
             this.edges.add(e);
-            //System.out.println(e);
             if (!this.vertices.contains(e.from())) {
                 this.vertices.add(e.from());
             }
@@ -99,9 +98,21 @@ public class TGraph {
     }
 
     public void merge(TGraph g) {
-        vertices.addAll(g.getVertices());
-        edges.addAll(g.edges());
-        terminals.addAll(g.terminals);
+        for (TVertex v: g.getVertices()) {
+            if (!vertices.contains(v)) {
+                vertices.add(v);
+            }
+        }
+        for (TEdge e: g.edges()) {
+            if (!edges.contains(e)) {
+                edges.add(e);
+            }
+        }
+        for (TVertex v: g.terminals()) {
+            if (!terminals.contains(v)) {
+                terminals.add(v);
+            }
+        }
     }
 
     @Override

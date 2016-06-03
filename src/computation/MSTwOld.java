@@ -46,7 +46,6 @@ public class MSTwOld extends Algorithm {
         List<TVertex> X = new ArrayList<>(transformed.terminals());
         TVertex r = transformed.root;
         TGraph tree = this.algorithm3(transformed, 2, k, r, X);
-
         // do postprocessing (page 424)
         System.out.println(this.doPostProcessing(transformed, tree));
 
@@ -69,17 +68,21 @@ public class MSTwOld extends Algorithm {
                 int min = Transform.infinity;
                 for (TVertex _v : X) {
                     TEdge _e = graph.getEdge(r, _v);
-
-                    if (_e.weight() < min) {
-                        min = _e.weight();
-                        edgeMin = _e;
+                    if (_e != null) {
+                        if (_e.weight() < min) {
+                            min = _e.weight();
+                            edgeMin = _e;
+                        }
                     }
                 }
 
                 // line 5 of algorithm 3
-                T.addUniqueEdge(edgeMin);
+                if (edgeMin != null) {
+                    T.addUniqueEdge(edgeMin);
+                    X.remove(edgeMin.to());
+                }
                 k--;
-                X.remove(edgeMin.to());
+
             }
         } else {
             while (k > 0) {
@@ -89,11 +92,13 @@ public class MSTwOld extends Algorithm {
 
                 // line 9 of algorithm 3
                 for (TVertex _v : graph.getVertices()) {
-                    for (int k1 = 1; k1 <= k; k++) {
+                    for (int k1 = 1; k1 <= k; k1++) {
 
                         // line 10 of algorithm 3
                         TGraph T1 = this.algorithm3(graph, i - 1, k1, _v, new ArrayList<>(X));
+                       // System.out.println(T1);
                         TEdge _e = graph.getEdge(r, _v);
+                        //System.out.println(_e);
                         if (_e != null) {
 
                             T1.addUniqueEdge(_e);
@@ -111,12 +116,16 @@ public class MSTwOld extends Algorithm {
 
 
                 // line 13 of algorithm 3
+                System.out.println(k);
+               // System.out.println(Tbest);
+                System.out.println(Tbest);
                 T.merge(Tbest);
-                for (TVertex _v : Tbest.getVertices()) {
-                    if (X.contains(_v)) {
-                        k--;
-                    }
-                }
+//                for (TVertex _v : Tbest.getVertices()) {
+//                    if (X.contains(_v)) {
+//                        k--;
+//                    }
+//                }
+                k--;
                 X.removeAll(Tbest.getVertices());
 
             }
