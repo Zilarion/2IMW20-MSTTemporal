@@ -19,18 +19,20 @@ public class Transform {
      * This method uses Floyd Wharshalls algorithm to turn the graph into the transitive closure of it.
      * @param graph The graph of which you want to get the transitive closure from.
      */
-    public static void createTransitiveClosure(TGraph graph) {
+    public static TGraph createTransitiveClosure(TGraph graph) {
+        TGraph closure = new TGraph(graph);
+
         // matrix containing all distances
-        int[][] dist = new int[graph.getVertices().size()][graph.getVertices().size()];
-        float[][] orig = new float[graph.getVertices().size()][graph.getVertices().size()];
+        int[][] dist = new int[closure.getVertices().size()][closure.getVertices().size()];
+        float[][] orig = new float[closure.getVertices().size()][closure.getVertices().size()];
 
         for (int i = 0; i < dist.length; i++) {
             for (int j = 0; j < dist[i].length; j++) {
                 dist[i][j] = infinity;
                 orig[i][j] = infinity;
             }
-            for (TEdge edge : graph.getVertices().get(i).out()) {
-                int j = graph.getVertices().indexOf(edge.to());
+            for (TEdge edge : closure.getVertices().get(i).out()) {
+                int j = closure.getVertices().indexOf(edge.to());
                 if (edge.weight() < dist[i][j]) {
                     dist[i][j] = edge.weight();
                     orig[i][j] = edge.weight();
@@ -38,9 +40,9 @@ public class Transform {
             }
         }
 
-        for (int k = 0; k < graph.getVertices().size(); k++) {
-            for (int i = 0; i < graph.getVertices().size(); i++) {
-                for (int j = 0; j < graph.getVertices().size(); j++) {
+        for (int k = 0; k < closure.getVertices().size(); k++) {
+            for (int i = 0; i < closure.getVertices().size(); i++) {
+                for (int j = 0; j < closure.getVertices().size(); j++) {
                     if (dist[i][k] != infinity && dist[k][j] != infinity) {
                         if (dist[i][k] + dist[k][j] < dist[i][j]) {
                             dist[i][j] = dist[i][k] + dist[k][j];
@@ -53,16 +55,18 @@ public class Transform {
         for (int i = 0; i < dist.length; i++) {
             for (int j = 0; j < dist.length; j++) {
                 if (dist[i][j] != orig[i][j]) {
-                    graph.addEdge(new TEdge(graph.getVertices().get(i),  graph.getVertices().get(j), dist[i][j]));
+                    closure.addEdge(new TEdge(closure.getVertices().get(i),  closure.getVertices().get(j), dist[i][j]));
                 }
             }
         }
 
-        for (TVertex v : graph.getVertices()) {
-            if (graph.getEdge(v, v) == null) {
-                graph.addEdge(new TEdge(v, v, 0));
+        for (TVertex v : closure.getVertices()) {
+            if (closure.getEdge(v, v) == null) {
+                closure.addEdge(new TEdge(v, v, 0));
             }
         }
+
+        return closure;
     }
 
     /**

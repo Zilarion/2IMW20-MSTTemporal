@@ -21,6 +21,13 @@ public class TGraph {
         terminals = new ArrayList<>();
     }
 
+    public TGraph (TGraph copy) {
+        vertices = new ArrayList<>(copy.vertices);
+        edges = new ArrayList<>(copy.edges);
+        terminals = new ArrayList<>(copy.terminals);
+        root = copy.root;
+    }
+
     public void addTerminal(TVertex terminal) {
         this.terminals.add(terminal);
     }
@@ -61,6 +68,13 @@ public class TGraph {
                 this.vertices.add(e.to());
             }
         }
+    }
+
+    public void removeEdge(TEdge edge) {
+        this.edges.remove(edge);
+        edge.from.removeOutEdge(edge);
+        edge.to.removeInEdge(edge);
+
     }
 
     public TEdge getEdge(TVertex from, TVertex to) {

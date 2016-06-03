@@ -53,6 +53,14 @@ public class TVertex {
         return in.add(edge);
     }
 
+    public void removeInEdge(TEdge edge) {
+        this.in.remove(edge);
+    }
+
+    public void removeOutEdge(TEdge edge) {
+        this.out.remove(edge);
+    }
+
     /**
      * Adds a new outgoing edge
      *

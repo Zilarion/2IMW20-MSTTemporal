@@ -1,5 +1,6 @@
 package computation;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import model.AbstractGraph;
 import model.TemporalGraph;
 import model.TemporalVertex;
@@ -37,22 +38,100 @@ public class MSTwOld extends Algorithm {
 
         // Create transitive closure
         System.out.println("Creating transitive closure..");
-        Transform.createTransitiveClosure(transformed);
+        TGraph algo3 = Transform.createTransitiveClosure(transformed);
 
         // do algorithm 3 (page 424)
         System.out.println("Apply algorithm 3..");
         int k = transformed.terminals().size();
         List<TVertex> X = new ArrayList<>(transformed.terminals());
         TVertex r = transformed.root;
-        TGraph tree = this.algorithm3(transformed, 2, k, r, new ArrayList<>(X));
-        
+        algo3 = this.algorithm3(algo3, 1, k, r, new ArrayList<>(X));
+
         // do postprocessing (page 424)
-        System.out.println(this.doPostProcessing(transformed, tree));
+        System.out.println("Do postprocessing..");
+        System.out.println(this.doPostProcessing(g, transformed, algo3));
 
     }
 
-    private TGraph doPostProcessing(TGraph transformed, TGraph tree) {
-        return tree;
+    private boolean shortestPath(List<TEdge> edges, TGraph transformed, TVertex from, TVertex to, int maxWeight) {
+        for (TEdge edge : to.in()) {
+            if (transformed.edges().contains(edge)) {
+                if (edge.from() == from) {
+                    if (edge.weight() <= maxWeight) {
+                        edges.add(edge);
+                        return true;
+                    }
+                } else {
+                    if (this.shortestPath(edges, transformed, from, edge.from(), maxWeight - edge.weight())) {
+                        edges.add(edge);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private TGraph doPostProcessing(TemporalGraph original, TGraph transformed, TGraph algo3) {
+        // Remove self-loops
+        for (TVertex vertex : algo3.getVertices()) {
+            for (TEdge edge : new ArrayList<>(vertex.in())) {
+                if (edge.from() == edge.to()) {
+                    algo3.removeEdge(edge);
+                }
+            }
+        }
+
+        // Step 1a
+        for (TEdge edge : new ArrayList<>(algo3.edges())) {
+            // Remove self-loops
+            if (!transformed.edges().contains(edge)) {
+                // Replace by shortest path..
+                List<TEdge> shortestPath = new ArrayList<>();
+                this.shortestPath(shortestPath, transformed, edge.from(), edge.to(), edge.weight());
+                for (TEdge e : shortestPath) {
+                    algo3.addUniqueEdge(e);
+                }
+                algo3.removeEdge(edge);
+            }
+        }
+
+        // First clean up the mess
+        for (TVertex vertex : algo3.getVertices()) {
+            for (TEdge in : new ArrayList<>(vertex.in())) {
+                if (!algo3.edges().contains(in)) {
+                    algo3.removeEdge(in);
+                }
+            }
+        }
+
+        for (TVertex vertex : algo3.getVertices()) {
+            for (TEdge out : new ArrayList<>(vertex.out())) {
+                if (!algo3.edges().contains(out)) {
+                    algo3.removeEdge(out);
+                }
+            }
+        }
+
+        // Step 1b
+        for (TVertex vertex : algo3.getVertices()) {
+            if (vertex.in().size() > 1) {
+                TEdge smallest = vertex.in().get(0);
+                for (TEdge edge : new ArrayList<>(vertex.in())) {
+                    if (smallest.weight() > edge.weight()) {
+                        algo3.removeEdge(smallest);
+                        smallest = edge;
+                    } else {
+                        algo3.removeEdge(edge);
+                    }
+                }
+            }
+        }
+
+        // Step 2a
+        // Step 2b
+
+        return algo3;
     }
 
     public TGraph algorithm3(TGraph graph, int i, int k, TVertex r, List<TVertex> X) {
