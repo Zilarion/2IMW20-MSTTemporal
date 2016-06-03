@@ -1,6 +1,6 @@
 package parsing;
 
-import computation.MSTwOld;
+import computation.MSTwNew;
 import model.*;
 
 import javax.swing.*;
@@ -172,10 +172,7 @@ public class Parser {
                             System.out.print("Column containing the end time: ");
                             int end = scan.nextInt();
                             TemporalGraph tg = parser.parse(chooser.getSelectedFile(), skip, from, to, weight, start, end);
-                            long time = System.currentTimeMillis();
-                            new MSTwOld().run(tg);
-                            time = System.currentTimeMillis() - time;
-                            System.out.println("Milliseconds to run: " + time);
+                            new MSTwNew().run(tg);
                         } else {
                             System.out.println(parser.parse(chooser.getSelectedFile(), skip, from, to, weight));
                         }

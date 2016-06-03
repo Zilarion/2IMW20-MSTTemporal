@@ -55,7 +55,7 @@ public class MSTwNew extends Algorithm {
      * @param r The root of the tree
      * @param X Terminal set
      */
-    private TGraph huang(int i, int k, TVertex r, List<TVertex> X, TGraph g) {
+    private TGraph huang(int i, int k, TVertex r, List<TVertex> X, TGraph G) {
         TGraph T = new TGraph();
         if (i == 1) {
             while (k > 0) {
@@ -78,11 +78,11 @@ public class MSTwNew extends Algorithm {
                 float bestDensity = Float.MAX_VALUE;
 
                 // foreach vertex v in V do
-                for (TVertex v : g.getVertices()) {
+                for (TVertex v : G.getVertices()) {
                     // Get (r,v)
                     TEdge e = r.getOutEdge(v);
                     // Call other algorithm
-                    TGraph TPrime = huangB(i-1, k, v, X, e);
+                    TGraph TPrime = huangB(i-1, k, v, X, e, G);
 
                     float TPrimeDensity = TPrime.density();
                     if (bestDensity > TPrimeDensity) {
@@ -111,18 +111,39 @@ public class MSTwNew extends Algorithm {
      * @param e The incoming edge of r
      * @return : A tree T with height i rooted at r covering at most k terminals in X so that the density of T U e is the smallest
      */
-    private TGraph huangB(int i, int k, TVertex r, List<TVertex> X, TEdge e) {
-        TGraph dst = new TGraph();
+    private TGraph huangB(int i, int k, TVertex r, List<TVertex> X, TEdge e, TGraph G) {
+        TGraph T = new TGraph(), TC = new TGraph();
         if (i == 1) {
             while (k > 0) {
                 // (r,v) <- arg_(r,v) min cost(r, v) FORALL v in X
                 TEdge minEdge = minCost(X, r);
 
+                // Tc <-  Tc union (r,v)
+                TC.addEdge(minEdge);
+
+                // k <- k - 1
+                k--;
+
+                // X <- X - {v}
+                X.remove(minEdge.to());
+
+                if (T.density() > TC.density()) {
+                    T = TC;
+                }
+
             }
         } else {
+            // TBest <- empty, den(TBest) <- infinity
+            TGraph TBest = new TGraph();
+
+            // For every vertex v in V do
+            for (TVertex v : G.getVertices()) {
+                TEdge rv = r.getOutEdge(v);
+                TGraph TPrime = huangB(i-1, k, v, X, rv, G);
+            }
 
         }
-        return dst;
+        return T;
     }
 
     private TEdge minCost(List<TVertex> X, TVertex r) {
