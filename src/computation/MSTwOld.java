@@ -42,13 +42,18 @@ public class MSTwOld extends Algorithm {
         // do algorithm 3 (page 424)
         System.out.println("Apply algorithm 3..");
 
-        int k = transformed.terminals.size();
-        List<TVertex> X = new ArrayList<>(transformed.terminals);
+        int k = transformed.terminals().size();
+        List<TVertex> X = new ArrayList<>(transformed.terminals());
         TVertex r = transformed.root;
-        System.out.println(this.algorithm3(transformed, 1, k, r, X));
+        TGraph tree = this.algorithm3(transformed, 2, k, r, X);
 
         // do postprocessing (page 424)
+        System.out.println(this.doPostProcessing(transformed, tree));
 
+    }
+
+    private TGraph doPostProcessing(TGraph transformed, TGraph tree) {
+        return tree;
     }
 
     public TGraph algorithm3(TGraph graph, int i, int k, TVertex r, List<TVertex> X) {
@@ -64,6 +69,7 @@ public class MSTwOld extends Algorithm {
                 int min = Transform.infinity;
                 for (TVertex _v : X) {
                     TEdge _e = graph.getEdge(r, _v);
+
                     if (_e.weight() < min) {
                         min = _e.weight();
                         edgeMin = _e;
@@ -79,24 +85,39 @@ public class MSTwOld extends Algorithm {
             while (k > 0) {
                 // line 8 of algorithm 3
                 TGraph Tbest = new TGraph();
-                float dens = Float.POSITIVE_INFINITY;
+                float den = Tbest.den(X.size());
 
                 // line 9 of algorithm 3
                 for (TVertex _v : graph.getVertices()) {
                     for (int k1 = 1; k1 <= k; k++) {
 
                         // line 10 of algorithm 3
-                        TGraph T1 = this.algorithm3(graph, i - 1, k1, _v, X);
-                        T1.addUniqueEdge(graph.getEdge(r, _v));
+                        TGraph T1 = this.algorithm3(graph, i - 1, k1, _v, new ArrayList<>(X));
+                        TEdge _e = graph.getEdge(r, _v);
+                        if (_e != null) {
 
-                        // line 11 of algorithm 3 TODO
-                        // line 12 of algorithm 3 TODO
+                            T1.addUniqueEdge(_e);
+
+                            // line 11 of algorithm 3
+                            float _d = T1.den(X.size());
+                            if (den > _d) {
+                                // line 12 of algorithm 3
+                                den = _d;
+                                Tbest = T1;
+                            }
+                        }
                     }
                 }
 
 
-                // line 13 of algorithm 3 TODO
-                // T.merge(Tbest);
+                // line 13 of algorithm 3
+                T.merge(Tbest);
+                for (TVertex _v : Tbest.getVertices()) {
+                    if (X.contains(_v)) {
+                        k--;
+                    }
+                }
+                X.removeAll(Tbest.getVertices());
 
             }
         }

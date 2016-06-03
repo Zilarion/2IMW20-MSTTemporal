@@ -24,7 +24,7 @@ public class MSTwNew extends Algorithm {
             Transform.createTransitiveClosure(T);
 
 
-            ArrayList<TVertex> X = T.terminals;
+            ArrayList<TVertex> X = T.terminals();
             int k = X.size();
 
             System.out.println("--------------");

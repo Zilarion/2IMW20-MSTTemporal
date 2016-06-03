@@ -7,9 +7,9 @@ import java.util.List;
  * Created by marcc on 1-6-2016.
  */
 public class TGraph {
-    protected ArrayList<TVertex> vertices;
-    protected ArrayList<TEdge> edges;
-    public final ArrayList<TVertex> terminals;
+    protected final ArrayList<TVertex> vertices;
+    protected final ArrayList<TEdge> edges;
+    private final ArrayList<TVertex> terminals;
     public TVertex root;
 
     /**
@@ -19,6 +19,22 @@ public class TGraph {
         vertices = new ArrayList<>();
         edges = new ArrayList<>();
         terminals = new ArrayList<>();
+    }
+
+    public void addTerminal(TVertex terminal) {
+        this.terminals.add(terminal);
+    }
+
+    public ArrayList<TVertex> terminals() {
+        return this.terminals;
+    }
+
+    public float den(int notCovered) {
+        if (this.getVertices().size() == 0) {
+            return Float.POSITIVE_INFINITY;
+        }
+
+        return ((float) cost() / (float) (this.terminals.size() - notCovered));
     }
 
     public List<TVertex> getVertices() {
@@ -32,7 +48,7 @@ public class TGraph {
     public void addUniqueEdge(TEdge e) {
         if (!this.edges.contains(e)) {
             this.edges.add(e);
-
+            //System.out.println(e);
             if (!this.vertices.contains(e.from())) {
                 this.vertices.add(e.from());
             }
@@ -79,7 +95,7 @@ public class TGraph {
         if (terminals.size() == 0) {
             return Float.MAX_VALUE;
         }
-        return ( (float) cost() / (float)terminals.size());
+        return ((float) cost() / (float) terminals.size());
     }
 
     public void merge(TGraph g) {
