@@ -166,6 +166,8 @@ public class MSTwOld extends Algorithm {
     }
 
     public TGraph algorithm3(TGraph graph, int i, int k, TVertex r, List<TVertex> X) {
+        // k is not necessarily equal to |X|
+
         // line 1 of algorithm 3
         TGraph T = new TGraph();
 
@@ -176,9 +178,11 @@ public class MSTwOld extends Algorithm {
                 // line 4 of algorithm 3
                 TEdge edgeMin = null;
                 int min = Transform.infinity;
-                for (TVertex _v : X) {
-                    TEdge _e = graph.getEdge(r, _v);
+                for (TVertex v : X) {
+                    TEdge _e = graph.getEdge(r, v);
+                    // This check should be here, since edge(r, v) doesn't have to exist
                     if (_e != null) {
+                        // If the edge has a lower weight than the current minimum weight
                         if (_e.weight() < min) {
                             min = _e.weight();
                             edgeMin = _e;
@@ -187,10 +191,13 @@ public class MSTwOld extends Algorithm {
                 }
 
                 // line 5 of algorithm 3
+                // This check should be here, since r doesn't need to have outgoing edges, in which case edgeMin = null
+                // and than T <- T union (r, v) remains just T and X <- X - {v} remains just X.
                 if (edgeMin != null) {
                     T.addUniqueEdge(edgeMin);
                     X.remove(edgeMin.to());
                 }
+                // Always decrease k. It doesn't matter if there exists an (r, v).
                 k--;
             }
         } else { // line 6 of algorithm 3
