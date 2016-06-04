@@ -14,6 +14,12 @@ public class TemporalGraph extends AbstractGraph<TemporalVertex, TemporalEdge> {
         return vertices.put(identifier, new TemporalVertex(identifier));
     }
 
+    public void removeEdge(TemporalEdge edge) {
+        this.edges.remove(edge);
+        edge.from().removeOutEdge(edge);
+        edge.to().removeInEdge(edge);
+    }
+
     /**
      * Adds
      * @param vertex

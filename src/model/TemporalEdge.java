@@ -20,7 +20,9 @@ public class TemporalEdge extends AbstractEdge<TemporalVertex> {
     public TemporalEdge(TemporalVertex from, TemporalVertex to, float start, float end) {
         this(from, to);
         this.start = start;
+        from.addOutEdge(this);
         this.end = end;
+        to.addInEdge(this);
     }
 
     /**

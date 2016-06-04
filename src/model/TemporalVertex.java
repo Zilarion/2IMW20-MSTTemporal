@@ -30,6 +30,24 @@ public class TemporalVertex extends AbstractVertex<TemporalEdge> {
         return out.add(edge);
     }
 
+    /**
+     * Adds a new incoming temporal edge
+     * @param edge The temporal edge to add
+     * @return true if properly inserted, false otherwise
+     */
+    public boolean removeInEdge(TemporalEdge edge) {
+        return in.remove(edge);
+    }
+
+    /**
+     * Adds a new outgoing temporal edge
+     * @param edge The temporal edge to add
+     * @return true if properly inserted, false otherwise
+     */
+    public boolean removeOutEdge(TemporalEdge edge) {
+        return out.remove(edge);
+    }
+
     public TemporalEdge getOutEdge(TemporalVertex v) {
         for (TemporalEdge e : out) {
             if (e.to().equals(v)) {

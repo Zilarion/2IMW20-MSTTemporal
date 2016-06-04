@@ -2,6 +2,7 @@ package computation;
 
 import com.sun.org.apache.xpath.internal.SourceTree;
 import model.AbstractGraph;
+import model.TemporalEdge;
 import model.TemporalGraph;
 import model.TemporalVertex;
 import transform.TEdge;
@@ -45,7 +46,7 @@ public class MSTwOld extends Algorithm {
         int k = transformed.terminals().size();
         List<TVertex> X = new ArrayList<>(transformed.terminals());
         TVertex r = transformed.root;
-        algo3 = this.algorithm3(algo3, 1, k, r, new ArrayList<>(X));
+        algo3 = this.algorithm3(algo3, 2, k, r, new ArrayList<>(X));
 
         // do postprocessing (page 424)
         System.out.println("Do postprocessing..");
@@ -72,7 +73,7 @@ public class MSTwOld extends Algorithm {
         return false;
     }
 
-    private TGraph doPostProcessing(TemporalGraph original, TGraph transformed, TGraph algo3) {
+    private TemporalGraph doPostProcessing(TemporalGraph original, TGraph transformed, TGraph algo3) {
         // Remove self-loops
         for (TVertex vertex : algo3.getVertices()) {
             for (TEdge edge : new ArrayList<>(vertex.in())) {
@@ -129,9 +130,39 @@ public class MSTwOld extends Algorithm {
         }
 
         // Step 2a
-        // Step 2b
+        for (TemporalEdge edge : new ArrayList<>(original.edges())) {
+            boolean found = false;
+            for (TEdge _e : algo3.edges()) {
+                if (edge.from().getIdentifier() == _e.from().origId && edge.to().getIdentifier() == _e.to().origId && edge.weight() == _e.weight()) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                original.removeEdge(edge);
+            }
+        }
 
-        return algo3;
+        // Step 2b
+        for (TemporalVertex vertex : original.getVertices().values()) {
+            if (vertex.in().size() > 1) {
+                float minValue = Float.POSITIVE_INFINITY;
+                TemporalEdge minEdge = null;
+                for (TemporalEdge edge : new ArrayList<>(vertex.in())) {
+                    if (minValue > edge.end()) {
+                        if (minEdge != null) {
+                            original.removeEdge(minEdge);
+                        }
+                        minValue = edge.end();
+                        minEdge = edge;
+                    } else {
+                        original.removeEdge(edge);
+                    }
+                }
+            }
+        }
+
+        return original;
     }
 
     public TGraph algorithm3(TGraph graph, int i, int k, TVertex r, List<TVertex> X) {
