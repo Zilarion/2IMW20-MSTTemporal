@@ -26,15 +26,13 @@ public class MSTwNew extends Algorithm {
             ArrayList<TVertex> X = T.terminals();
             int k = X.size();
 
-//            System.out.println("--------------");
-//            System.out.println("Running huang i=1");
-//            TGraph result = huang(1, k, T.root, new ArrayList<>(X), T);
+            TGraph result = huang(2, k, T.root, new ArrayList<>(X), T);
+//            System.out.println("---- Huang result ----");
 //            System.out.println(result);
-//            System.out.println("--------------");
-            System.out.println("Running huang i=3");
-            TGraph result = huang(3, k, T.root, new ArrayList<>(X), T);
-            System.out.println("---- Final result ----");
-            System.out.println(result);
+
+
+            System.out.println("Running postprocessing..");
+            System.out.println(Transform.doPostProcessing(g, T, result));
         } else {
             throw new IllegalArgumentException("Cannot use MSTw without temporal graph");
         }
@@ -59,7 +57,7 @@ public class MSTwNew extends Algorithm {
      */
     private TGraph huang(int i, int k, TVertex r, List<TVertex> X, TGraph G) {
         TGraph T = new TGraph(); // line 1
-        System.out.println("Huang: " + i);
+
         if (i == 1) { // line 2
             while (k > 0) { // line 3
                 // line 4, (r,v) <- arg_(r,v) min cost(r, v) FOR ALL v in X
@@ -139,8 +137,6 @@ public class MSTwNew extends Algorithm {
     private TGraph huangB(int i, int k, TVertex r, List<TVertex> X, TEdge e, TGraph G) {
         TGraph T = new TGraph(), TC = new TGraph(); // Line 1
 
-        System.out.println("-----");
-        System.out.println("HuangB_start: " + i);
         if (i == 1) { // Line 2
             while (k > 0) { // Line 3
                 // Line 4, (r,v) <- arg_(r,v) min cost(r, v) FOR ALL v in X
@@ -213,8 +209,6 @@ public class MSTwNew extends Algorithm {
             }
         }
         // Line 18
-        System.out.println("HuangB_end: " + i);
-        System.out.println(T);
         return T;
     }
 
