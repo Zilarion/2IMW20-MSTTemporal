@@ -1,6 +1,7 @@
 package computation;
 
 import com.sun.org.apache.xpath.internal.SourceTree;
+import com.sun.org.apache.xpath.internal.axes.PathComponent;
 import model.AbstractGraph;
 import model.TemporalEdge;
 import model.TemporalGraph;
@@ -46,7 +47,7 @@ public class MSTwOld extends Algorithm {
         int k = transformed.terminals().size();
         List<TVertex> X = new ArrayList<>(transformed.terminals());
         TVertex r = transformed.root;
-        algo3 = this.algorithm3(algo3, 2, k, r, new ArrayList<>(X));
+        algo3 = this.algorithm3(algo3, 4, k, r, new ArrayList<>(X));
 
         // do postprocessing (page 424)
         System.out.println("Do postprocessing..");
@@ -165,12 +166,20 @@ public class MSTwOld extends Algorithm {
         return original;
     }
 
+    private String term(List<TVertex> X) {
+        String result = "";
+        for (TVertex x : X) {
+            result += x;
+            result += " ";
+        }
+        return result;
+    }
+
     public TGraph algorithm3(TGraph graph, int i, int k, TVertex r, List<TVertex> X) {
         // k is not necessarily equal to |X|
 
         // line 1 of algorithm 3
         TGraph T = new TGraph();
-
         // line 2 of algorithm 3
         if (i == 1) {
             // line 3 of algorithm 3
@@ -205,24 +214,25 @@ public class MSTwOld extends Algorithm {
             while (k > 0) {
                 // line 8 of algorithm 3
                 TGraph T_best = new TGraph();
-                float den = T_best.den(graph.terminals());
+                float den = T_best.den(X);
                 // line 9 of algorithm 3
                 for (TVertex _v : graph.getVertices()) {
                     for (int k_accent = 1; k_accent <= k; k_accent++) {
-
-                        // line 10 of algorithm 3
-                        TGraph T_accent = this.algorithm3(graph, i - 1, k_accent, _v, new ArrayList<>(X)); // X shouldn't be passed as reference
                         TEdge _e = graph.getEdge(r, _v);
-                        if (_e != null && !T_accent.getVertices().isEmpty()) {
-                            T_accent.addUniqueEdge(_e);
-                        }
 
-                        // line 11 of algorithm 3
-                        float _d = T_accent.den(graph.terminals());
-                        if (den > _d) {
-                            // line 12 of algorithm 3
-                            den = _d;
-                            T_best = T_accent;
+                        // If edge (r, v) doesn't exists, it makes no sense to check for further paths
+                        if (_e != null) {
+                            // line 10 of algorithm 3
+                            TGraph T_accent = this.algorithm3(graph, i - 1, k_accent, _v, new ArrayList<>(X)); // X shouldn't be passed as reference
+                            T_accent.addUniqueEdge(_e);
+
+                            // line 11 of algorithm 3
+                            float _d = T_accent.den(X);
+                            if (den > _d) {
+                                // line 12 of algorithm 3
+                                den = _d;
+                                T_best = T_accent;
+                            }
                         }
                     }
                 }
@@ -234,6 +244,11 @@ public class MSTwOld extends Algorithm {
                         X.remove(_v);
                         k--;
                     }
+                }
+                // If it turns out there are no outgoing edges for the given root, T_best is empty, but we still
+                // need to decrease k. Otherwise the algorithm would be stuck forever.
+                if (T_best.getVertices().isEmpty()) {
+                    k--;
                 }
             }
         }
