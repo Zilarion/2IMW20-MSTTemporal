@@ -37,16 +37,17 @@ public class TGraph {
     }
 
     public float den(List<TVertex> terminals) {
-        if (this.getVertices().size() == 0) {
-            return Float.POSITIVE_INFINITY;
-        }
         int covered = 0;
-        for (TVertex v : this.vertices) {
+        for (TVertex v : vertices) {
             if (terminals.contains(v)) {
                 covered++;
             }
         }
-        return ((float) cost() / (float) (covered));
+        if (covered == 0) {
+             return Float.POSITIVE_INFINITY;
+        } else {
+            return ((float) cost() / (float) (covered));
+        }
     }
 
     public List<TVertex> getVertices() {
@@ -107,13 +108,6 @@ public class TGraph {
             cost += e.weight();
         }
         return cost;
-    }
-
-    public float density() {
-        if (terminals.size() == 0) {
-            return Float.MAX_VALUE;
-        }
-        return ((float) cost() / (float) terminals.size());
     }
 
     public void merge(TGraph g) {
