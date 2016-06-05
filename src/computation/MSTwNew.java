@@ -143,7 +143,6 @@ public class MSTwNew extends Algorithm {
         System.out.println("HuangB_start: " + i);
         if (i == 1) { // Line 2
             while (k > 0) { // Line 3
-                System.out.println("k: " + k);
                 // Line 4, (r,v) <- arg_(r,v) min cost(r, v) FOR ALL v in X
                 TEdge minEdge = minCost(G, X, r);
 
