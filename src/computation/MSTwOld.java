@@ -47,7 +47,7 @@ public class MSTwOld extends Algorithm {
         int k = transformed.terminals().size();
         List<TVertex> X = new ArrayList<>(transformed.terminals());
         TVertex r = transformed.root;
-        algo3 = this.algorithm3(algo3, 4, k, r, new ArrayList<>(X));
+        algo3 = this.algorithm3(algo3, 2, k, r, new ArrayList<>(X));
 
         // do postprocessing (page 424)
         System.out.println("Do postprocessing..");
