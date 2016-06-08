@@ -55,15 +55,6 @@ public class MSTwOld extends Algorithm {
 
     }
 
-    private String term(List<TVertex> X) {
-        String result = "";
-        for (TVertex x : X) {
-            result += x;
-            result += " ";
-        }
-        return result;
-    }
-
     public TGraph algorithm3(TGraph graph, int i, int k, TVertex r, List<TVertex> X) {
         // k is not necessarily equal to |X|
 

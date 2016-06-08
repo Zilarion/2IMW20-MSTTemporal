@@ -17,6 +17,7 @@ public class Transform {
 
     /**
      * This method uses Floyd Wharshalls algorithm to turn the graph into the transitive closure of it.
+     *
      * @param graph The graph of which you want to get the transitive closure from.
      */
     public static TGraph createTransitiveClosure(TGraph graph) {
@@ -55,7 +56,7 @@ public class Transform {
         for (int i = 0; i < dist.length; i++) {
             for (int j = 0; j < dist.length; j++) {
                 if (dist[i][j] != orig[i][j]) {
-                    closure.addEdge(new TEdge(closure.getVertices().get(i),  closure.getVertices().get(j), dist[i][j]));
+                    closure.addEdge(new TEdge(closure.getVertices().get(i), closure.getVertices().get(j), dist[i][j]));
                 }
             }
         }
@@ -71,8 +72,9 @@ public class Transform {
 
     /**
      * Transform graph using the steps on page 423.
+     *
      * @param graph The graph you need to transform.
-     * @param root The root vertex of that graph.
+     * @param root  The root vertex of that graph.
      * @return The transformed graph.
      */
     public static TGraph transform(TemporalGraph graph, TemporalVertex root) {
@@ -155,15 +157,15 @@ public class Transform {
     private static boolean shortestPath(List<TEdge> edges, TGraph transformed, TVertex from, TVertex to, int maxWeight) {
         for (TEdge edge : to.in()) {
             if (transformed.edges().contains(edge)) {
-                if (edge.from() == from) {
-                    if (edge.weight() <= maxWeight) {
+                if (edge.weight() <= maxWeight) {
+                    if (edge.from() == from) {
                         edges.add(edge);
                         return true;
-                    }
-                } else {
-                    if (shortestPath(edges, transformed, from, edge.from(), maxWeight - edge.weight())) {
-                        edges.add(edge);
-                        return true;
+                    } else {
+                        if (shortestPath(edges, transformed, from, edge.from(), maxWeight - edge.weight())) {
+                            edges.add(edge);
+                            return true;
+                        }
                     }
                 }
             }
