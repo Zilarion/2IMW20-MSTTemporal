@@ -26,14 +26,13 @@ public class MSTwNew extends Algorithm {
             ArrayList<TVertex> X = T.terminals();
             int k = X.size();
 
-//            System.out.println("--------------");
-//            System.out.println("Running huang i=1");
-//            TGraph result = huang(1, k, T.root, new ArrayList<>(X), T);
+            TGraph result = huang(2, k, T.root, new ArrayList<>(X), T);
+//            System.out.println("---- Huang result ----");
 //            System.out.println(result);
-//            System.out.println("--------------");
-            System.out.println("Running huang i=3");
-            TGraph result = huang(3, k, T.root, new ArrayList<>(X), T);
-            System.out.println(result);
+
+
+            System.out.println("Running postprocessing..");
+            System.out.println(Transform.doPostProcessing(g, T, result));
         } else {
             throw new IllegalArgumentException("Cannot use MSTw without temporal graph");
         }
@@ -58,7 +57,7 @@ public class MSTwNew extends Algorithm {
      */
     private TGraph huang(int i, int k, TVertex r, List<TVertex> X, TGraph G) {
         TGraph T = new TGraph(); // line 1
-        System.out.println("Huang: " + i);
+
         if (i == 1) { // line 2
             while (k > 0) { // line 3
                 // line 4, (r,v) <- arg_(r,v) min cost(r, v) FOR ALL v in X
@@ -99,20 +98,25 @@ public class MSTwNew extends Algorithm {
                     if (bestDensity > TPrimeDensity) {
                         // line 12
                         bestDensity = TPrimeDensity;
+                        TBest = TPrime;
                     }
+                }
 
-                    // Line 13, T = T union Tbest
-                    T.merge(TBest);
+                // Line 13, T = T union Tbest
+                T.merge(TBest);
 
-                    // Line 13, Calculate X intersection V(TBest)
-                    List<TVertex> XIntersectTBest = new ArrayList<>(X);
-                    XIntersectTBest.retainAll(TBest.getVertices());
+                // Line 13, Calculate X intersection V(TBest)
+                List<TVertex> XIntersectTBest = new ArrayList<>(X);
+                XIntersectTBest.retainAll(TBest.getVertices());
 
-                    // Line 13, k <- k - |X intersection V(Tbest)|
-                    k = k - XIntersectTBest.size();
+                // Line 13, k <- k - |X intersection V(Tbest)|
+                k = k - XIntersectTBest.size();
 
-                    // Line 13, X <- X - V(Tbest)
-                    X.removeAll(TBest.getVertices());
+                // Line 13, X <- X - V(Tbest)
+                X.removeAll(TBest.getVertices());
+
+                if (TBest.getVertices().isEmpty()) {
+                    k--;
                 }
             }
         }
@@ -133,22 +137,10 @@ public class MSTwNew extends Algorithm {
     private TGraph huangB(int i, int k, TVertex r, List<TVertex> X, TEdge e, TGraph G) {
         TGraph T = new TGraph(), TC = new TGraph(); // Line 1
 
-        System.out.println("-----");
-        System.out.println("HuangB: " + i);
-        System.out.println("r: " + r.getIdentifier());
-        System.out.print("X: ");
-        for (TVertex v : X) {
-            System.out.print(v.getIdentifier() + ", ");
-        }
-        System.out.println("");
-        System.out.println("e: " + e.from().getIdentifier() + " -> " + e.to().getIdentifier());
         if (i == 1) { // Line 2
             while (k > 0) { // Line 3
-                System.out.println("k: " + k);
                 // Line 4, (r,v) <- arg_(r,v) min cost(r, v) FOR ALL v in X
                 TEdge minEdge = minCost(G, X, r);
-
-                System.out.println("minEdge: " + minEdge);
 
                 if (minEdge != null) {
                     // Line 5, Tc <-  Tc union (r,v)
@@ -190,34 +182,43 @@ public class MSTwNew extends Algorithm {
                         // Line 14, Tbest <- T'
                         TBest = TPrime;
                     }
-                    // Line 15, Tc <- Tc union Tbest
-                    TC.merge(TBest);
+                }
 
-                    // Line 15, Calculate X intersection V(Tbest)
-                    List<TVertex> XIntersectTBest = new ArrayList<>(X);
-                    XIntersectTBest.retainAll(TBest.getVertices());
+                // Line 15, Tc <- Tc union Tbest
+                TC.merge(TBest);
 
-                    // Line 15, k <- k - |X intersection V(Tbest)|
-                    k = k - XIntersectTBest.size();
+                // Line 15, Calculate X intersection V(Tbest)
+                List<TVertex> XIntersectTBest = new ArrayList<>(X);
+                XIntersectTBest.retainAll(TBest.getVertices());
 
-                    // Line 16
-                    if (T.den(X) > TC.den(X)) {
-                        // Line 17
-                        T = TC;
-                    }
+                // Line 15, k <- k - |X intersection V(Tbest)|
+                k = k - XIntersectTBest.size();
 
-                    // Line 15, X <- X - V(Tbest)
-                    X.removeAll(TBest.getVertices());
+                // Line 16
+                if (T.den(X) > TC.den(X)) {
+                    // Line 17
+                    T = TC;
+                }
 
+                // Line 15, X <- X - V(Tbest)
+                X.removeAll(TBest.getVertices());
+
+                if (TBest.getVertices().isEmpty()) {
+                    k--;
                 }
             }
         }
         // Line 18
-        System.out.println("-----");
-        System.out.println(T);
         return T;
     }
 
+    /**
+     * Gets the minimum cost edge from r to any v in X
+     * @param g The graph to use
+     * @param X The set of vertices to get the minimum cost to
+     * @param r The vertex to find an edge from
+     * @return The minimum cost edge if one exists, null otherwise
+     */
     private TEdge minCost(TGraph g, List<TVertex> X, TVertex r) {
         // (r,v) <- arg_(r,v) min cost(r, v) FOR ALL v in X
         float minCost = Float.MAX_VALUE;
@@ -229,25 +230,6 @@ public class MSTwNew extends Algorithm {
                 minCost = e.weight();
             }
         }
-        if (minEdge == null) {
-            return new TEdge(r, X.get(0), Integer.MAX_VALUE);
-        }
-//            System.out.println("----");
-//            System.out.println("r: " + r.getIdentifier());
-//            System.out.println("--");
-//            System.out.print("x: ");
-//            for (int i = 0; i < X.size(); i++) {
-//                System.out.print(X.get(i).getIdentifier() + ", ");
-//            }
-//            System.out.println();
-//            System.out.println("--");
-//            System.out.print("Vout:");
-//            for (int i = 0; i < r.out().size(); i++) {
-//                System.out.print(r.out().get(i).to().getIdentifier() + ", ");
-//            }
-//            System.out.println();
-//            System.out.println("----");
-//        }
         return minEdge;
     }
 }
