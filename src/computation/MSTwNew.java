@@ -2,6 +2,7 @@ package computation;
 
 import model.AbstractGraph;
 import model.TemporalGraph;
+import model.TemporalVertex;
 import transform.TEdge;
 import transform.TGraph;
 import transform.TVertex;
@@ -15,40 +16,18 @@ import java.util.List;
  */
 public class MSTwNew extends Algorithm {
     @Override
-    public void run(AbstractGraph graph) {
-        if (graph instanceof TemporalGraph) {
-            TemporalGraph g = (TemporalGraph) graph;
-
-            int index = findRoot(g);
-            TGraph T = Transform.transform(g, g.getVertex(index));
-            Transform.createTransitiveClosure(T);
-
-            ArrayList<TVertex> X = T.terminals();
-            int k = X.size();
-
-            TGraph result = huang(2, k, T.root, new ArrayList<>(X), T);
+    public TGraph run(TemporalGraph g, TGraph transformed, TGraph closure, int i) {
+        ArrayList<TVertex> X = transformed.terminals();
+        return huang(i, X.size(), transformed.root, new ArrayList<>(X), closure);
 //            System.out.println("---- Huang result ----");
 //            System.out.println(result);
 
-
-            System.out.println("Running postprocessing..");
-            System.out.println(Transform.doPostProcessing(g, T, result));
-        } else {
-            throw new IllegalArgumentException("Cannot use MSTw without temporal graph");
-        }
     }
 
-    private int findRoot(TemporalGraph g) {
-        for (int i = 0; i < g.getVertices().size(); i++) {
-            if (g.getVertex(i) != null) {
-                return i;
-            }
-        }
-        return -1;
-    }
 
     /**
      * Calculates MSTw according to the improved algorithm proposed by Huang
+     *
      * @param k The number of covered terminals
      * @param i The height of the tree
      * @param r The root of the tree
@@ -88,7 +67,7 @@ public class MSTwNew extends Algorithm {
                     if (e == null) continue;
 
                     // line 10, Call other algorithm
-                    TGraph TPrime = huangB(i-1, k, v, new ArrayList<>(X), e, G);
+                    TGraph TPrime = huangB(i - 1, k, v, new ArrayList<>(X), e, G);
 
                     // line 10, TPrime union (r,v)
                     TPrime.addUniqueEdge(e);
@@ -126,6 +105,7 @@ public class MSTwNew extends Algorithm {
 
     /**
      * Algorithm 5 in the huang paper
+     *
      * @param i Level number
      * @param k Maximum number of available terminals
      * @param r DST root
@@ -214,6 +194,7 @@ public class MSTwNew extends Algorithm {
 
     /**
      * Gets the minimum cost edge from r to any v in X
+     *
      * @param g The graph to use
      * @param X The set of vertices to get the minimum cost to
      * @param r The vertex to find an edge from
@@ -231,5 +212,10 @@ public class MSTwNew extends Algorithm {
             }
         }
         return minEdge;
+    }
+
+    @Override
+    public String toString() {
+        return "New algorithm";
     }
 }

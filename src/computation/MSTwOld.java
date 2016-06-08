@@ -1,9 +1,6 @@
 package computation;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-import com.sun.org.apache.xpath.internal.axes.PathComponent;
 import model.AbstractGraph;
-import model.TemporalEdge;
 import model.TemporalGraph;
 import model.TemporalVertex;
 import transform.TEdge;
@@ -21,37 +18,9 @@ import java.util.List;
 public class MSTwOld extends Algorithm {
 
     @Override
-    public void run(AbstractGraph graph) {
-        TemporalGraph g;
-        if (graph instanceof TemporalGraph) {
-            g = (TemporalGraph) graph;
-        } else {
-            throw new IllegalArgumentException("Cannot use MSTw without temporal graph");
-        }
-
-        // Assume interval to be [0, inf) and get root
-        ArrayList<Long> vKeys = new ArrayList<>(g.getVertices().keySet());
-        Collections.sort(vKeys);
-        TemporalVertex root = g.getVertex(vKeys.get(0));
-
-        // Transform graph (page 423)
-        System.out.println("Creating transformed graph..");
-        TGraph transformed = Transform.transform(g, root);
-
-        // Create transitive closure
-        System.out.println("Creating transitive closure..");
-        TGraph algo3 = Transform.createTransitiveClosure(transformed);
-
+    public TGraph run(TemporalGraph g, TGraph transformed, TGraph algo3, int i) {
         // do algorithm 3 (page 424)
-        System.out.println("Apply algorithm 3..");
-        int k = transformed.terminals().size();
-        List<TVertex> X = new ArrayList<>(transformed.terminals());
-        TVertex r = transformed.root;
-        algo3 = this.algorithm3(algo3, 2, k, r, new ArrayList<>(X));
-
-        // do postprocessing (page 424)
-        System.out.println("Do postprocessing..");
-        System.out.println(Transform.doPostProcessing(g, transformed, algo3));
+        return algorithm3(algo3, i, transformed.terminals().size(), transformed.root, new ArrayList<>(transformed.terminals()));
 
     }
 
@@ -135,5 +104,10 @@ public class MSTwOld extends Algorithm {
 
         // line 14 of algorithm 3
         return T;
+    }
+
+    @Override
+    public String toString() {
+        return "Old algorithm";
     }
 }
