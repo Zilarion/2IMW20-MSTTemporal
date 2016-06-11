@@ -32,6 +32,7 @@ for (index in c(1, 2)) {
 
 	all <- all[with(all, order(X.V..closure)),]
 	
+png(filename=paste("V", index))
 	# Plot |V| v.s. Time
 	matplot(
 		xlim=xrangeV, ylim=yrange, 
@@ -39,9 +40,11 @@ for (index in c(1, 2)) {
 		xlab="|V|", ylab="Time (s)", 
 		all[,1], all[,3:ncol(all)]
 	)
+dev.off()
 	
 	all <- all[with(all, order(X.E./X.V..closure)),]
 	
+png(filename=paste("EoverV", index))
 	# Plot |E|/|V| v.s. time
 	matplot(
 		xlim=xrangeEV, ylim=yrange, 
@@ -49,4 +52,5 @@ for (index in c(1, 2)) {
 		xlab="|E|/|V|", ylab="Time (s)", 
 		all[,2]/all[,1], all[,3:ncol(all)]
 	)
+dev.off()
 }
