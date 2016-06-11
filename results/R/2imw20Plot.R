@@ -1,9 +1,9 @@
 # Load data
-data <- read.csv("./processed.csv");
+data <- read.csv("./processeddiff.csv")
 
 
 # setup window
-par(mfrow=c(2,2))
+par(mfrow=c(3,2))
 
 
 # Plot graphs for algorithm running time
@@ -13,13 +13,9 @@ for (index in c(1, 2)) {
 	old <- data[data$Algorithm!="New",]
 	old <- old[old$i==index,]
 	new <- new[new$i==index,]
-
-	# sort by closure |V|
-	#old <- old[with(old, order(X.V..closure)),]
-	#new <- new[with(new, order(X.V..closure)),]
 	
 	#old[7] and new[7] for normal time, old[9] and new[9] for sum time (includes post-P)
-	all <- data.frame(old[2], old[3], old[9], new[9]);
+	all <- data.frame(old[2], old[3], old[9], new[9])
 
 	all <- data.frame(all[1], all[2], all[,3:ncol(all)]/1000)
 
@@ -32,7 +28,6 @@ for (index in c(1, 2)) {
 
 	all <- all[with(all, order(X.V..closure)),]
 	
-png(filename=paste("V", index))
 	# Plot |V| v.s. Time
 	matplot(
 		xlim=xrangeV, ylim=yrange, 
@@ -40,11 +35,9 @@ png(filename=paste("V", index))
 		xlab="|V|", ylab="Time (s)", 
 		all[,1], all[,3:ncol(all)]
 	)
-dev.off()
 	
 	all <- all[with(all, order(X.E./X.V..closure)),]
 	
-png(filename=paste("EoverV", index))
 	# Plot |E|/|V| v.s. time
 	matplot(
 		xlim=xrangeEV, ylim=yrange, 
@@ -52,5 +45,27 @@ png(filename=paste("EoverV", index))
 		xlab="|E|/|V|", ylab="Time (s)", 
 		all[,2]/all[,1], all[,3:ncol(all)]
 	)
-dev.off()
 }
+
+diffData <- (data[,11]-mean(data[,11]));
+diffRange <- range(min(diffData), max(diffData))
+
+#png(filename="diffV.png")
+plot(
+	ylim=diffRange, type="p", pch="o",
+	xlab="|V|", ylab="Difference(Theoretical-Experimental)",
+	data[,1], diffData, col=data[,6]
+)
+abline(h=0, lty=2)
+#dev.off()
+
+#png(filename="diffE.png")
+plot(
+	ylim=diffRange, type="p", pch="o",
+	xlab="|E|", ylab="Difference(Theoretical-Experimental)",
+	data[,3], diffData, col=data[,6]
+)
+abline(h=0, lty=2)
+#dev.off()
+
+
