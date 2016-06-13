@@ -1,5 +1,5 @@
 # Load data
-data <- read.csv("./processeddiff.csv")
+data <- read.csv("./processedfinal.csv")
 
 
 # setup window
@@ -28,6 +28,7 @@ for (index in c(1, 2)) {
 
 	all <- all[with(all, order(X.V..closure)),]
 	
+	png(filename=paste("V", index))
 	# Plot |V| v.s. Time
 	matplot(
 		xlim=xrangeV, ylim=yrange, 
@@ -35,9 +36,10 @@ for (index in c(1, 2)) {
 		xlab="|V|", ylab="Time (s)", 
 		all[,1], all[,3:ncol(all)]
 	)
+	dev.off();
+	all <- all[with(all, order(X.E..closure/X.V..closure)),]
 	
-	all <- all[with(all, order(X.E./X.V..closure)),]
-	
+	png(filename=paste("EoverV", index))
 	# Plot |E|/|V| v.s. time
 	matplot(
 		xlim=xrangeEV, ylim=yrange, 
@@ -45,27 +47,30 @@ for (index in c(1, 2)) {
 		xlab="|E|/|V|", ylab="Time (s)", 
 		all[,2]/all[,1], all[,3:ncol(all)]
 	)
+	dev.off();
 }
 
-diffData <- (data[,11]-mean(data[,11]));
+data <- data.frame(data[,1], data[,-1], (data[,9]/data[,10]))
+diffData <- (data[,12]-mean(data[,12]));
 diffRange <- range(min(diffData), max(diffData))
+colors <- c('#000000', "#00FF00", "#FF0000")
 
-#png(filename="diffV.png")
+png(filename="diffV.png")
 plot(
 	ylim=diffRange, type="p", pch="o",
 	xlab="|V|", ylab="Difference(Theoretical-Experimental)",
-	data[,1], diffData, col=data[,6]
+	data[,2], diffData, col=data[,6]
 )
 abline(h=0, lty=2)
-#dev.off()
+dev.off()
 
-#png(filename="diffE.png")
+png(filename="diffE.png")
 plot(
 	ylim=diffRange, type="p", pch="o",
 	xlab="|E|", ylab="Difference(Theoretical-Experimental)",
-	data[,3], diffData, col=data[,6]
+	data[,3]/data[,2], diffData, col=data[,6]
 )
 abline(h=0, lty=2)
-#dev.off()
+dev.off()
 
 
